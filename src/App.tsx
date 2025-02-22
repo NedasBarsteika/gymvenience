@@ -16,7 +16,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/shop" element={<ShopPage />} />
+            <Route path="/parduotuve" element={<ShopPage />} />
           </Routes>
         </Router>
       </motion.div>

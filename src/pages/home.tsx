@@ -4,23 +4,24 @@ import { useState } from 'react';
 
 function HomePage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
   return (
-    <div className='App'>
+    <div className='flex flex-col min-h-screen'>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 1 }}
+        className='flex-grow'
       >
         {/* NAVBAR */}
         <nav className="bg-black border-gray-200 dark:bg-white-900">
           <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <a className="font-semibold block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent" href="/">
+            <a className="font-semibold block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent text-2xl" href="/">
               Gymvenience
             </a>
             <button
@@ -58,7 +59,7 @@ function HomePage() {
                     href="#parduotuve"
                     className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
                   >
-                    Parduotuve
+                    Parduotuvė
                   </a>
                 </li>
                 <li>
@@ -77,16 +78,44 @@ function HomePage() {
                     Kontaktai
                   </a>
                 </li>
+                <li>
+                  <img
+                    src="./Images/avatar.png"
+                    alt="Avatar"
+                    className="rounded-full w-7 h-7 hidden md:block"
+                  />
+                </li>
               </ul>
             </div>
           </div>
         </nav>
 
-        {/* FOOTER */}
-        <footer className="py-5 text-center bg-black">
-          <p>© 2025 Gymvenience - All Rights Reserved</p>
-        </footer>
+        {/* HERO SECTION */}
+        <section className="flex justify-center my-6 max-w-screen-xl mx-auto">
+          <img src="./Images/example5.gif" alt="Fitness Banner" className="rounded-xl shadow-lg w-full" />
+        </section>
+
+        {/* CARDS SECTION */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-screen-xl mx-auto p-6">
+          <a href="/parduotuve" className="p-6 border rounded-xl shadow-lg text-center hover:shadow-xl block bg-gray-100">
+            <img src="./Images/protein.jpg" alt="Parduotuvė" className="mx-auto mb-4 h-55 object-cover" />
+            <h2 className="text-xl font-bold text-black mt-10">Parduotuvė</h2>
+          </a>
+          <a href="/treneriai" className="p-6 border rounded-xl shadow-lg text-center hover:shadow-xl block bg-gray-100">
+            <img src="./Images/trainer.jpg" alt="Treneriai" className="mx-auto mb-4 h-55 object-cover" />
+            <h2 className="text-xl font-bold text-black mt-10">Treneriai</h2>
+          </a>
+          <a href="/kontaktai" className="p-6 border rounded-xl shadow-lg text-center hover:shadow-xl block bg-gray-100">
+            <img src="./Images/phone.webp" alt="Kontaktai" className="mx-auto mb-4 h-55 object-cover" />
+            <h2 className="text-xl font-bold text-black mt-10">Kontaktai</h2>
+          </a>
+        </section>
       </motion.div>
+
+      {/* FOOTER */}
+      <footer className='py-5 text-center bg-black text-white mt-auto'>
+        <p>© 2025 Gymvenience - All Rights Reserved</p>
+      </footer>
     </div>
   )
 }
