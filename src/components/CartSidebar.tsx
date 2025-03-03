@@ -29,7 +29,7 @@ const CartSidebar: React.FC = () => {
 
       {/* Main Container: flex layout with a scrollable area + fixed footer area */}
       {isOpen && (
-        <div className="flex flex-col h-150">
+        <div className="flex flex-col h-auto">
           {/* Scrollable Cart Items */}
           <div className="p-4 flex-grow overflow-y-auto">
             <h2 className="text-lg font-bold mb-4">Krepšelis</h2>
