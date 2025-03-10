@@ -15,6 +15,8 @@ const products = [
 function ShopPage() {
   return (
     <div className="flex flex-col min-h-screen relative">
+      <Navbar />
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -22,7 +24,6 @@ function ShopPage() {
         transition={{ duration: 1 }}
         className="flex-grow"
       >
-        <Navbar />
         <section className="py-6 bg-gray-100">
           <div className="max-w-screen-xl mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-6xl font-bold">Parduotuvė</h1>
@@ -37,6 +38,7 @@ function ShopPage() {
           ))}
         </section>
       </motion.div>
+      
       <Footer />
       <CartSidebar />
     </div>

@@ -1,13 +1,14 @@
 // src/pages/home.tsx
 import { motion } from 'framer-motion';
 import '../App.css';
-import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
+      <Navbar />
+
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -15,8 +16,6 @@ function HomePage() {
         transition={{ duration: 1 }}
         className="flex-grow"
       >
-        <Navbar />
-
         {/* HERO SECTION */}
         <section className="flex justify-center my-6 max-w-screen-xl mx-auto">
           <img src="./Images/example5.gif" alt="Fitness Banner" className="rounded-xl shadow-lg w-full" />
@@ -38,6 +37,7 @@ function HomePage() {
           </a>
         </section>
       </motion.div>
+      
       <Footer />
     </div>
   );
