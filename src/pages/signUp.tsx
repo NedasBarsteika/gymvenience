@@ -19,7 +19,7 @@ function SignUpPage() {
     });
 
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<any>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,28 +35,34 @@ function SignUpPage() {
         }
 
         setLoading(true);
-        try {
-            const response = await axios.post("https://yourbackend.com/api/auth/register", {
-                name: formData.name,
-                surname: formData.surname,
-                email: formData.email,
-                password: formData.password,
+
+        await axios.post("https://localhost:7296/user/register", {
+            name: formData.name,
+            surname: formData.surname,
+            email: formData.email,
+            password: formData.password,
+        })
+            .then(function (response: any) {
+                console.log(response);
+                if (response.status === 200) {
+                    alert("Registracija sėkminga!")
+                    navigate("/prisijungimas");
+                }
+                else if (response.status === 500) {
+                    setError("Serverio klaida. Bandykite kitą kartą.");
+                }
+            })
+            .catch(function (error: any) {
+                setError(error.response.data);
             });
 
-            console.log("Registracija sėkminga:", response.data);
-            alert("Registracija sėkminga!")
-            navigate("/prisijungimas");
-        } catch (err) {
-            setError("Registracijos klaida. Bandykite dar kartą.");
-            console.error("Registracijos klaida:", err);
-        } finally {
-            setLoading(false);
-        }
+        setLoading(false);
     };
 
     return (
         <div className="flex flex-col min-h-screen">
             <NavbarOnlyLogo />
+
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
