@@ -4,8 +4,12 @@ import '../App.css';
 import NavbarOnlyLogo from '../components/NavbarOnlyLogo';
 import Footer from '../components/Footer';
 import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function SignUpPage() {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         name: "",
         surname: "",
@@ -14,18 +18,42 @@ function SignUpPage() {
         confirmPassword: "",
     });
 
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
+
         if (formData.password !== formData.confirmPassword) {
-            alert("Slaptažodžiai skiriasi!");
+            setError("Slaptažodžiai skiriasi!");
             return;
         }
-        console.log("Vartotojas uzregistruotas:", formData);
+
+        setLoading(true);
+        try {
+            const response = await axios.post("https://yourbackend.com/api/auth/register", {
+                name: formData.name,
+                surname: formData.surname,
+                email: formData.email,
+                password: formData.password,
+            });
+
+            console.log("Registracija sėkminga:", response.data);
+            alert("Registracija sėkminga!")
+            navigate("/prisijungimas");
+        } catch (err) {
+            setError("Registracijos klaida. Bandykite dar kartą.");
+            console.error("Registracijos klaida:", err);
+        } finally {
+            setLoading(false);
+        }
     };
+
     return (
         <div className="flex flex-col min-h-screen">
             <NavbarOnlyLogo />
@@ -39,6 +67,9 @@ function SignUpPage() {
                 <div className="flex flex-1 justify-center items-center bg-gray-100 p-4">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
                         <h2 className="text-2xl font-bold mb-4 text-center">Paskyros kūrimas</h2>
+
+                        {error && <p className="text-red-500 text-sm text-center mb-5">{error}</p>}
+
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <input
                                 type="text"
@@ -53,7 +84,7 @@ function SignUpPage() {
                                 type="text"
                                 name="surname"
                                 placeholder="Pavardė"
-                                value={formData.name}
+                                value={formData.surname}
                                 onChange={handleChange}
                                 className="w-full p-2 border rounded"
                                 required
@@ -85,8 +116,12 @@ function SignUpPage() {
                                 className="w-full p-2 border rounded"
                                 required
                             />
-                            <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
-                                Registruotis
+                            <button
+                                type="submit"
+                                className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+                                disabled={loading}
+                            >
+                                {loading ? "Registruojama..." : "Registruotis"}
                             </button>
                         </form>
                     </div>
