@@ -7,15 +7,12 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function SignUpPage() {
+function LoginPage() {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-        name: "",
-        surname: "",
         email: "",
         password: "",
-        confirmPassword: "",
     });
 
     const [loading, setLoading] = useState(false);
@@ -29,28 +26,23 @@ function SignUpPage() {
         e.preventDefault();
         setError(null);
 
-        if (!formData.name || !formData.surname || !formData.email || !formData.password || !formData.confirmPassword) {
-            setError("Įveskite visus duomenis");
-            return;
-        }
-
-        if (formData.password !== formData.confirmPassword) {
-            setError("Slaptažodžiai skiriasi!");
+        if (!formData.email || !formData.password) {
+            setError("Įveskite prisijungimo duomenis");
             return;
         }
 
         setLoading(true);
 
-        await axios.post("https://localhost:7296/user/register", {
-            name: formData.name,
-            surname: formData.surname,
+        await axios.post("https://localhost:7296/user/login", {
             email: formData.email,
             password: formData.password,
         })
             .then(function (response: any) {
                 if (response.status === 200) {
-                    alert("Registracija sėkminga!")
-                    navigate("/prisijungimas");
+                    const token = response.data;
+                    // setToken(token);
+                    document.cookie = `token=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
+                    navigate("/");
                 }
                 else if (response.status === 500) {
                     setError("Serverio klaida. Bandykite kitą kartą.");
@@ -76,29 +68,11 @@ function SignUpPage() {
             >
                 <div className="flex flex-1 justify-center items-center bg-gray-100 p-4">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-                        <h2 className="text-2xl font-bold mb-4 text-center">Paskyros kūrimas</h2>
+                        <h2 className="text-2xl font-bold mb-4 text-center">Prisijungimas</h2>
 
                         {error && <p className="text-red-500 text-sm text-center mb-5">{error}</p>}
 
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Vardas"
-                                value={formData.name}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
-                            <input
-                                type="text"
-                                name="surname"
-                                placeholder="Pavardė"
-                                value={formData.surname}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
                             <input
                                 type="email"
                                 name="email"
@@ -117,21 +91,12 @@ function SignUpPage() {
                                 className="w-full p-2 border rounded"
                                 required
                             />
-                            <input
-                                type="password"
-                                name="confirmPassword"
-                                placeholder="Pakartokite slaptažodį"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                className="w-full p-2 border rounded"
-                                required
-                            />
                             <button
                                 type="submit"
                                 className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
                                 disabled={loading}
                             >
-                                {loading ? "Registruojama..." : "Registruotis"}
+                                {loading ? "Prisijungiama..." : "Prisijungti"}
                             </button>
                         </form>
                     </div>
@@ -143,4 +108,4 @@ function SignUpPage() {
     );
 }
 
-export default SignUpPage;
+export default LoginPage;
