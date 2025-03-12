@@ -1,17 +1,28 @@
 // src/components/Navbar.tsx
+// import axios from 'axios';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
+  const navigate = useNavigate();
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-  const handleSignOut = () => {
-    console.log("User signed out");
-    // Implement sign-out logic here (e.g., clearing auth tokens, redirecting)
-  };
+  const handleSignOut = async () => {
+    try {
+        // await axios.post("https://localhost:7296/user/logout", {}, { withCredentials: true });
+        
+        localStorage.removeItem("authToken");
+        document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        
+        navigate("/");
+    } catch (error) {
+        console.error("Logout failed", error);
+    }
+};
 
   const user = {
     name: "Jonas",

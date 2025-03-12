@@ -17,6 +17,7 @@ function LoginPage() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>(null);
+    const [token, setToken] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,7 +41,7 @@ function LoginPage() {
             .then(function (response: any) {
                 if (response.status === 200) {
                     const token = response.data;
-                    // setToken(token);
+                    setToken(token);
                     document.cookie = `token=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
                     navigate("/");
                 }
