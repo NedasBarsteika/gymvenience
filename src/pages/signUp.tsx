@@ -128,7 +128,7 @@ function SignUpPage() {
                             />
                             <button
                                 type="submit"
-                                className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-gray-400"
+                                className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:bg-gray-400 hover:cursor-pointer"
                                 disabled={loading}
                             >
                                 {loading ? "Registruojama..." : "Registruotis"}

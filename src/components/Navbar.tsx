@@ -4,9 +4,18 @@ import { Link } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+  const handleSignOut = () => {
+    console.log("User signed out");
+    // Implement sign-out logic here (e.g., clearing auth tokens, redirecting)
+  };
+
+  const user = {
+    name: "Jonas",
+    surname: "Jonaitis",
   };
 
   return (
@@ -68,12 +77,17 @@ const Navbar: React.FC = () => {
                 Kontaktai
               </a>
             </li>
-            <li>
-              <img
-                src="./Images/avatar.png"
-                alt="Avatar"
-                className="rounded-full w-7 h-7 hidden md:block"
-              />
+            <li className="relative">
+              <button onClick={toggleDropdown} className="focus:outline-none hover:cursor-pointer">
+                <img src="./Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
+              </button>
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                  <div className="px-4 py-2 text-sm text-gray-700">{user.name} {user.surname}</div>
+                  <Link to="/profilis" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profilis</Link>
+                  <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 hover:cursor-pointer">Atsijungti</button>
+                </div>
+              )}
             </li>
           </ul>
         </div>
