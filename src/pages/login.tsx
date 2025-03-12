@@ -5,10 +5,11 @@ import NavbarOnlyLogo from '../components/NavbarOnlyLogo';
 import Footer from '../components/Footer';
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from "react-router-dom";
 
 function LoginPage() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [formData, setFormData] = useState({
         email: "",
@@ -17,7 +18,6 @@ function LoginPage() {
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<any>(null);
-    const [token, setToken] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,9 +41,10 @@ function LoginPage() {
             .then(function (response: any) {
                 if (response.status === 200) {
                     const token = response.data;
-                    setToken(token);
+                    localStorage.setItem("authToken", token);
                     document.cookie = `token=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
-                    navigate("/");
+                    const previousPage = location.state?.from || "/";
+                    navigate(previousPage, { replace: true });
                 }
                 else if (response.status === 500) {
                     setError("Serverio klaida. Bandykite kitą kartą.");

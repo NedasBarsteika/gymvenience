@@ -1,33 +1,37 @@
 // src/components/Navbar.tsx
-// import axios from 'axios';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
-  
+  const location = useLocation()
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const handleSignOut = async () => {
     try {
-        // await axios.post("https://localhost:7296/user/logout", {}, { withCredentials: true });
-        
-        localStorage.removeItem("authToken");
-        document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        
-        navigate("/");
+      localStorage.removeItem("authToken");
+      document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      setIsAuthenticated(false);
+      navigate("/");
     } catch (error) {
-        console.error("Logout failed", error);
+      console.error("Logout failed", error);
     }
-};
+  };
 
   const user = {
     name: "Jonas",
     surname: "Jonaitis",
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    setIsAuthenticated(!!token);
+  }, []);
 
   return (
     <nav className="bg-black border-gray-200 dark:bg-white-900">
@@ -88,18 +92,32 @@ const Navbar: React.FC = () => {
                 Kontaktai
               </a>
             </li>
-            <li className="relative">
-              <button onClick={toggleDropdown} className="focus:outline-none hover:cursor-pointer">
-                <img src="./Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
-              </button>
-              {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                  <div className="px-4 py-2 text-sm text-gray-700">{user.name} {user.surname}</div>
-                  <Link to="/profilis" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profilis</Link>
-                  <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 hover:cursor-pointer">Atsijungti</button>
-                </div>
-              )}
-            </li>
+            {isAuthenticated ? (
+              <li className="relative">
+                <button onClick={toggleDropdown} className="flex items-center space-x-1 focus:outline-none hover:cursor-pointer">
+                  <img src="./Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
+                  <span className="text-white">&#9662;</span>
+                </button>
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                    <div className="px-4 py-2 text-sm text-gray-700">{user.name} {user.surname}</div>
+                    <Link to="/profilis" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profilis</Link>
+                    <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 hover:cursor-pointer">Atsijungti</button>
+                  </div>
+                )}
+              </li>
+            ) : (
+              <li className="relative">
+                <button onClick={toggleDropdown} className="focus:outline-none hover:cursor-pointer">
+                  <img src="./Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
+                </button>
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                    <Link to="/prisijungimas" state={{ from: location.pathname }} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Prisijungti</Link>
+                  </div>
+                )}
+              </li>
+            )}
           </ul>
         </div>
       </div>
