@@ -5,6 +5,7 @@ import HomePage from './pages/home';
 import ShopPage from './pages/shop';
 import SignUpPage from './pages/signUp';
 import LoginPage from './pages/login';
+import TrainersPage from './pages/trainers';
 
 function App() {
   return (
@@ -13,6 +14,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/parduotuve" element={<ShopPage />} />
+          <Route path="/treneriai" element={<TrainersPage />} />
+          {/* <Route path="/treneriai/:trainerName" element={<TrainerPage />} /> */}
 
           <Route path="/registracija" element={<SignUpPage />} />
           <Route path="/prisijungimas" element={<LoginPage />} />
