@@ -6,6 +6,7 @@ import ShopPage from './pages/shop';
 import SignUpPage from './pages/signUp';
 import LoginPage from './pages/login';
 import TrainersPage from './pages/trainers';
+import ProfilePage from './pages/profilePage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/parduotuve" element={<ShopPage />} />
           <Route path="/treneriai" element={<TrainersPage />} />
           {/* <Route path="/treneriai/:trainerName" element={<TrainerPage />} /> */}
+          <Route path="/profilis" element={<ProfilePage />} />
 
           <Route path="/registracija" element={<SignUpPage />} />
           <Route path="/prisijungimas" element={<LoginPage />} />

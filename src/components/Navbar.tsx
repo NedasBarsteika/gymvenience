@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
                 Kontaktai
               </a>
             </li>
-            {isAuthenticated ? (
+            {!isAuthenticated ? (
               <li className="relative">
                 <button onClick={toggleDropdown} className="flex items-center space-x-1 focus:outline-none hover:cursor-pointer">
                   <img src="./Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
@@ -105,7 +105,9 @@ const Navbar: React.FC = () => {
                     <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 hover:cursor-pointer">Atsijungti</button>
                   </div>
                 )}
+                
               </li>
+              
             ) : (
               <li className="relative">
                 <button onClick={toggleDropdown} className="focus:outline-none hover:cursor-pointer">
