@@ -8,6 +8,8 @@ function ProfilePage() {
 
 
     return (
+        <><title>Gymvenience | Profilis</title>
+        
         <div className="flex flex-col min-h-screen relative">
             <Navbar />
             <div className="flex-nowrap columns-2 min-h-screen relative">
@@ -30,15 +32,15 @@ function ProfilePage() {
                     </Link>
                     <Link
                         to="/"
-                        className="border-r-4 font-semibold block py-2 px-3 text-gray-900 rounded hover:bg-gray-400 bg-gray-300 text-2xl"  
-                                          >
+                        className="border-r-4 font-semibold block py-2 px-3 text-gray-900 rounded hover:bg-gray-400 bg-gray-300 text-2xl"
+                    >
                         Vizitų istorija
                     </Link>
                 </div>
             </div>
 
             <Footer />
-        </div>
+        </div></>
 
     );
 }
