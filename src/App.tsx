@@ -7,6 +7,7 @@ import SignUpPage from './pages/signUp';
 import LoginPage from './pages/login';
 import TrainersPage from './pages/trainers';
 import ProfilePage from './pages/profilePage';
+import CheckoutPage from './pages/checkout';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
 
           <Route path="/registracija" element={<SignUpPage />} />
           <Route path="/prisijungimas" element={<LoginPage />} />
+          <Route path="/Atsiskaitymas" element={<CheckoutPage />} />
         </Routes>
       </Router>
     </CartProvider>

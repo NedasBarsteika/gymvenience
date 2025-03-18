@@ -1,5 +1,5 @@
 // src/context/CartContext.tsx
-import React, { createContext, useState, ReactNode, useContext } from 'react';
+import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 export interface CartItem {
   id: number;
@@ -14,6 +14,8 @@ interface CartContextProps {
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: number) => void;
   decrementFromCart: (id: number) => void;
+  incrementFromCart: (id: number) => void;
+  setQuantityInCart: (id: number, newQty: number) => void; // add
   clearCart: () => void;
 }
 
@@ -23,26 +25,29 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   const addToCart = (item: CartItem) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find(i => i.id === item.id);
-      if (existingItem) {
-        return prevItems.map(i =>
+    setCartItems(prev => {
+      const existing = prev.find(i => i.id === item.id);
+      if (existing) {
+        return prev.map(i =>
           i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
         );
       }
-      return [...prevItems, item];
+      return [...prev, item];
     });
   };
 
-  // Remove one quantity; if quantity is 1, remove the item completely
+  const removeFromCart = (id: number) => {
+    setCartItems(prev => prev.filter(i => i.id !== id));
+  };
+
   const decrementFromCart = (id: number) => {
-    setCartItems(prevItems =>
-      prevItems.reduce((acc: CartItem[], item) => {
+    setCartItems(prev =>
+      prev.reduce((acc: CartItem[], item) => {
         if (item.id === id) {
           if (item.quantity > 1) {
             acc.push({ ...item, quantity: item.quantity - 1 });
           }
-          // If quantity is 1, we skip adding it to the accumulator (removing it)
+          // if quantity was 1, removing the item
         } else {
           acc.push(item);
         }
@@ -51,9 +56,22 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
   };
 
-  // Remove the entire item regardless of quantity
-  const removeFromCart = (id: number) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== id));
+  const incrementFromCart = (id: number) => {
+    setCartItems(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
+
+  // Allow setting an exact quantity in a single step
+  const setQuantityInCart = (id: number, newQty: number) => {
+    if (newQty < 1) newQty = 1; // clamp or remove item if you prefer
+    setCartItems(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, quantity: newQty } : item
+      )
+    );
   };
 
   const clearCart = () => {
@@ -61,7 +79,17 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, decrementFromCart, clearCart }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        decrementFromCart,
+        incrementFromCart,
+        setQuantityInCart,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );
@@ -69,7 +97,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
 export const useCart = () => {
   const context = useContext(CartContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;

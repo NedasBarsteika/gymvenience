@@ -66,12 +66,12 @@ const CartSidebar: React.FC = () => {
 
           {/* Checkout Button at the Bottom */}
           <div className="p-4 border-t">
-            <Link
-              to="/checkout"
+          <Link
+              to="/Atsiskaitymas"
               className="block w-full bg-green-600 text-white py-2 text-center rounded transition transform duration-150 hover:scale-105 active:scale-95 hover:bg-green-700 focus:outline-none"
-            >
+              >
               Atsiskaitymas
-            </Link>
+          </Link>
           </div>
         </div>
       )}
