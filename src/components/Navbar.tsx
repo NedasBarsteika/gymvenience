@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
                 Kontaktai
               </a>
             </li>
-            {!isAuthenticated ? (
+            {isAuthenticated ? (
               <li className="relative">
                 <button onClick={toggleDropdown} className="flex items-center space-x-1 focus:outline-none hover:cursor-pointer">
                   <img src="./Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
