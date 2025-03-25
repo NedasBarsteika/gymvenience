@@ -41,7 +41,7 @@ const CartSidebar: React.FC = () => {
                   <li key={item.id} className="flex items-center justify-between border p-2 rounded">
                     <div className="flex items-center">
                       <img
-                        src={item.image}
+                        src={item.coverImageUrl}
                         alt={item.name}
                         className="w-10 h-10 object-cover rounded mr-3"
                       />

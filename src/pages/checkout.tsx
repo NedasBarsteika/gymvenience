@@ -67,7 +67,7 @@ function CheckoutPage() {
                 {cartItems.map(item => (
                   <li key={item.id} className="border p-3 rounded flex items-center justify-between">
                     <div className="flex items-center">
-                      <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded mr-3" />
+                      <img src={item.coverImageUrl} alt={item.name} className="w-16 h-16 object-cover rounded mr-3" />
                       <div>
                         <p className="font-semibold">{item.name}</p>
                         <div className="flex items-center space-x-2 mt-1">

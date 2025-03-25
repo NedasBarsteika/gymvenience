@@ -4,9 +4,11 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 export interface CartItem {
   id: number;
   name: string;
+  description: string;
+  category: string;
   price: number;
+  coverImageUrl: string;
   quantity: number;
-  image: string;
 }
 
 interface CartContextProps {

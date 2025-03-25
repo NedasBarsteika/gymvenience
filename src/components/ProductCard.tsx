@@ -5,20 +5,22 @@ import { useCart } from '../context/CartContext';
 interface ProductCardProps {
   id: number;
   name: string;
+  description: string;
+  category: string;
   price: number;
-  image: string;
+  coverImageUrl: string;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ id, name, price, image }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ id, name, description, category, price, coverImageUrl }) => {
   const { addToCart } = useCart();
 
   const handleAddToCart = () => {
-    addToCart({ id, name, price, image, quantity: 1 });
+    addToCart({ id, name, description, category, price, coverImageUrl, quantity: 1 });
   };
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105">
-      <img src={image} alt={name} className="w-full h-100 object-cover" />
+      <img src={coverImageUrl} alt={name} className="w-full h-100 object-cover" />
       <div className="p-4">
         <h2 className="text-lg font-semibold text-gray-800">{name}</h2>
         <p className="mt-2 text-gray-600">€{price.toFixed(2)}</p>
