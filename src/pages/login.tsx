@@ -40,8 +40,10 @@ function LoginPage() {
         })
             .then(function (response: any) {
                 if (response.status === 200) {
-                    const token = response.data;
+                    const token = response.data.token;
+                    const user = response.data.user;
                     localStorage.setItem("authToken", token);
+                    localStorage.setItem("user", JSON.stringify(user));
                     document.cookie = `token=${token}; path=/; max-age=3600; Secure; SameSite=Strict`;
                     const previousPage = location.state?.from || "/";
                     navigate(previousPage, { replace: true });
