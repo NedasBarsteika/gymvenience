@@ -1,6 +1,5 @@
 // src/pages/checkout.tsx
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import { loadStripe } from '@stripe/stripe-js';
@@ -19,7 +18,6 @@ interface ShippingOption {
 }
 
 function CheckoutPage() {
-  const navigate = useNavigate();
   const { cartItems, incrementFromCart, decrementFromCart, setQuantityInCart } = useCart();
 
   const shippingOptions: ShippingOption[] = [

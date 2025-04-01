@@ -5,29 +5,61 @@ import Footer from "../components/Footer"
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-const trainers = [
-    {
-        name: "Clyde Marks",
-        image: "/Images/Trainers/clyde.jpg",
-        description: "Introduce your staff and team members to your potential clients.",
-        rating: 4,
-    },
-    {
-        name: "Lilith Vera",
-        image: "/Images/Trainers/lilith.jpg",
-        description: "Introduce your staff and team members to your potential clients.",
-        rating: 5,
-    },
-    {
-        name: "Kyla Alvarez",
-        image: "/Images/Trainers/kyla.jpg",
-        description: "Introduce your staff and team members to your potential clients.",
-        rating: 3,
-    }
-];
+// const trainers = [
+//     {
+//         name: "Clyde Marks",
+//         image: "/Images/Trainers/clyde.jpg",
+//         description: "Introduce your staff and team members to your potential clients.",
+//         rating: 4,
+//     },
+//     {
+//         name: "Lilith Vera",
+//         image: "/Images/Trainers/lilith.jpg",
+//         description: "Introduce your staff and team members to your potential clients.",
+//         rating: 5,
+//     },
+//     {
+//         name: "Kyla Alvarez",
+//         image: "/Images/Trainers/kyla.jpg",
+//         description: "Introduce your staff and team members to your potential clients.",
+//         rating: 3,
+//     }
+// ];
+
+interface Trainer {
+    id: number;
+    name: string;
+    surname: string;
+    imageUrl: string;
+    description: string;
+    rating: number;
+}
 
 export default function TrainersPage() {
+    const [trainers, setTrainers] = useState<Trainer[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchTrainers = async () => {
+            try {
+                const response = await axios.get("https://localhost:7296/user/trainers");
+                setTrainers(response.data);
+            } catch (err) {
+                setError("Failed to load trainers");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTrainers();
+    }, []);
+
+    console.log(trainers)
+    
     return (
         <div className="flex flex-col min-h-screen relative">
             <Navbar />
@@ -49,22 +81,28 @@ export default function TrainersPage() {
                 </section>
 
                 <div className="container mx-auto py-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-5">
-                    {trainers.map((trainer, index) => (
-                        <Link key={index} to={`/treneriai/${trainer.name.toLowerCase().replace(" ", "-")}`}>
-                            <Card className="bg-gray-800 text-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                                <img src={trainer.image} alt={trainer.name} className="w-full h-60 object-cover" />
-                                <CardContent className="p-5">
-                                    <h2 className="text-2xl font-bold">{trainer.name}</h2>
-                                    <p className="mt-2 text-gray-300">{trainer.description}</p>
-                                    <div className="flex mt-3">
-                                        {[...Array(5)].map((_, i) => (
-                                            <Star key={i} className={`w-5 h-5 ${i < trainer.rating ? 'text-yellow-500' : 'text-gray-500'}`} />
-                                        ))}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </Link>
-                    ))}
+                    {loading ? (
+                        <p className="text-center text-lg">Kraunama...</p>
+                    ) : error ? (
+                        <p className="text-center text-lg text-red-500">{error}</p>
+                    ) : (
+                        trainers.map((trainer) => (
+                            <Link key={trainer.id} to={`/treneriai/${trainer.name.toLowerCase()}-${trainer.surname.toLowerCase()}`}>
+                                <Card className="bg-gray-800 text-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                                    <img src={trainer.imageUrl} alt={trainer.name} className="w-full h-60 object-cover" />
+                                    <CardContent className="p-5">
+                                        <h2 className="text-2xl font-bold">{trainer.name} {trainer.surname}</h2>
+                                        <p className="mt-2 text-gray-300">{trainer.description}</p>
+                                        <div className="flex mt-3">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star key={i} className={`w-5 h-5 ${i < trainer.rating ? 'text-yellow-500' : 'text-gray-500'}`} />
+                                            ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </Link>
+                        ))
+                    )}
                 </div>
             </motion.div>
 
