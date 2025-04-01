@@ -1,10 +1,15 @@
 // src/pages/checkout.tsx
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import axios from 'axios';
+import { loadStripe } from '@stripe/stripe-js';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+
+// Initialize Stripe with your test publishable key
+const stripePromise = loadStripe('pk_test_51R8yi7H6vinJyGQsXgmj4xjTUaKIVnmfOkSq6A0YHRCvpheoN4ejatevvuyJITNNshEs9IzDsEHzy0mt2OrI3VDd003SV7ixEz');
 
 interface ShippingOption {
   label: string;
@@ -43,8 +48,23 @@ function CheckoutPage() {
     setQuantityInCart(id, num);
   };
 
-  const handleProceedToPayment = () => {
-    navigate('/payment', { state: { shippingMethod: selectedShipping, totalPrice } });
+  const handleProceedToPayment = async () => {
+    try {
+      const response = await axios.post('https://localhost:7296/api/Payment/create-checkout-session', {
+        totalPrice: totalPrice,
+        shippingMethod: selectedShipping.value
+      });
+      const sessionId = response.data.sessionId;
+      
+      // Redirect to Stripe Checkout.
+      const stripe = await stripePromise;
+      const { error } = await stripe!.redirectToCheckout({ sessionId });
+      if (error) {
+        console.error('Stripe redirect error:', error.message);
+      }
+    } catch (err) {
+      console.error('Error creating checkout session:', err);
+    }
   };
 
   return (
@@ -62,7 +82,7 @@ function CheckoutPage() {
           {cartItems.length === 0 ? (
             <p className="text-center">Krepšelis tuščias.</p>
           ) : (
-            <div>
+            <>
               <ul className="space-y-4">
                 {cartItems.map(item => (
                   <li key={item.id} className="border p-3 rounded flex items-center justify-between">
@@ -92,7 +112,13 @@ function CheckoutPage() {
                 <div className="flex flex-col space-y-2">
                   {shippingOptions.map(option => (
                     <label key={option.value} className="flex items-center space-x-2">
-                      <input type="radio" name="shipping" value={option.value} checked={selectedShipping.value === option.value} onChange={handleShippingChange} />
+                      <input
+                        type="radio"
+                        name="shipping"
+                        value={option.value}
+                        checked={selectedShipping.value === option.value}
+                        onChange={handleShippingChange}
+                      />
                       <img src={option.image} alt={option.label} className="w-8 h-8 object-contain" />
                       <span>{option.label} ( €{option.price.toFixed(2)} )</span>
                     </label>
@@ -106,10 +132,13 @@ function CheckoutPage() {
                 <div className="text-xl font-bold">Viso: €{totalPrice.toFixed(2)}</div>
               </div>
 
-              <button onClick={handleProceedToPayment} className="mt-6 w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
+              <button
+                onClick={handleProceedToPayment}
+                className="mt-6 w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+              >
                 Toliau į mokėjimą
               </button>
-            </div>
+            </>
           )}
         </div>
       </motion.div>
