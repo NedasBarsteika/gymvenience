@@ -1,26 +1,40 @@
-import './App.css';
-import { motion } from 'framer-motion';
+// src/App.tsx
+import { CartProvider } from './context/CartContext';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from './pages/home';
 import ShopPage from './pages/shop';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import SignUpPage from './pages/signUp';
+import LoginPage from './pages/login';
+import TrainersPage from './pages/trainers';
+import ProfilePage from './pages/profile';
+import CheckoutPage from './pages/checkout';
+import OrderPage from './pages/orders';
+import SchedulePage from './pages/schedules';
+import AboutPage from './pages/about';
+import TrainerPage from './pages/trainer';
 
 function App() {
   return (
-    <div className="App">
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 1 }}
-      >
-        <Router>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/shop" element={<ShopPage />} />
-          </Routes>
-        </Router>
-      </motion.div>
-    </div>
+    <CartProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/parduotuve" element={<ShopPage />} />
+          <Route path="/treneriai" element={<TrainersPage />} />
+          <Route path="/treneriai/:trainer/Name" element={<TrainerPage />} />
+
+          <Route path="/apie" element={<AboutPage />} />
+
+          <Route path="/profilis" element={<ProfilePage />} />
+          <Route path="/profilis/uzsakymai" element={<OrderPage />} />
+          <Route path="/profilis/vizitai" element={<SchedulePage />} />
+
+          <Route path="/registracija" element={<SignUpPage />} />
+          <Route path="/prisijungimas" element={<LoginPage />} />
+          <Route path="/Atsiskaitymas" element={<CheckoutPage />} />
+        </Routes>
+      </Router>
+    </CartProvider>
   );
 }
 
