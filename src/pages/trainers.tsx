@@ -1,33 +1,12 @@
 // src/pages/trainers.tsx
 import { Card, CardContent } from "../components/Card";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer"
+import Footer from "../components/Footer";
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
-// const trainers = [
-//     {
-//         name: "Clyde Marks",
-//         image: "/Images/Trainers/clyde.jpg",
-//         description: "Introduce your staff and team members to your potential clients.",
-//         rating: 4,
-//     },
-//     {
-//         name: "Lilith Vera",
-//         image: "/Images/Trainers/lilith.jpg",
-//         description: "Introduce your staff and team members to your potential clients.",
-//         rating: 5,
-//     },
-//     {
-//         name: "Kyla Alvarez",
-//         image: "/Images/Trainers/kyla.jpg",
-//         description: "Introduce your staff and team members to your potential clients.",
-//         rating: 3,
-//     }
-// ];
 
 interface Trainer {
     id: number;
@@ -42,11 +21,31 @@ export default function TrainersPage() {
     const [trainers, setTrainers] = useState<Trainer[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [cities, setCities] = useState<string[]>([]);
+    const [addresses, setAddresses] = useState<string[]>([]);
+    const [selectedCity, setSelectedCity] = useState<string>('');
+    const [selectedAddress, setSelectedAddress] = useState<string>('');
+
+    useEffect(() => {
+        const fetchFilters = async () => {
+            try {
+                const citiesRes = await axios.get("https://localhost:7296/api/gym/cities");
+                const addressesRes = await axios.get("https://localhost:7296/api/gym/addresses");
+                setCities(citiesRes.data);
+                setAddresses(addressesRes.data);
+            } catch (err) {
+                console.error("Failed to load cities or addresses");
+            }
+        };
+        fetchFilters();
+    }, []);
 
     useEffect(() => {
         const fetchTrainers = async () => {
+            setLoading(true);
             try {
-                const response = await axios.get("https://localhost:7296/user/trainers");
+                const endpoint = `/user/searchTrainers?city=${selectedCity}&address=${selectedAddress}`;
+                const response = await axios.get(`https://localhost:7296${endpoint}`);
                 setTrainers(response.data);
             } catch (err) {
                 setError("Failed to load trainers");
@@ -54,12 +53,9 @@ export default function TrainersPage() {
                 setLoading(false);
             }
         };
-
         fetchTrainers();
-    }, []);
+    }, [selectedCity, selectedAddress]);
 
-    console.log(trainers)
-    
     return (
         <div className="flex flex-col min-h-screen relative">
             <Navbar />
@@ -77,6 +73,28 @@ export default function TrainersPage() {
                         <p className="mt-4 text-lg md:text-2xl">
                             Išsirinkite Jūsų norimą trenerį.
                         </p>
+                        <div className="mt-6 flex flex-col md:flex-row gap-4 justify-center">
+                            <select
+                                value={selectedCity}
+                                onChange={(e) => setSelectedCity(e.target.value)}
+                                className="p-2 border border-gray-500 rounded"
+                            >
+                                <option value="">Miestas (visi)</option>
+                                {cities.map((city, idx) => (
+                                    <option key={idx} value={city}>{city}</option>
+                                ))}
+                            </select>
+                            <select
+                                value={selectedAddress}
+                                onChange={(e) => setSelectedAddress(e.target.value)}
+                                className="p-2 border border-gray-500 rounded"
+                            >
+                                <option value="">Adresas (visi)</option>
+                                {addresses.map((addr, idx) => (
+                                    <option key={idx} value={addr}>{addr}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </section>
 
