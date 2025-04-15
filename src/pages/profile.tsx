@@ -1,22 +1,41 @@
 // src/pages/profile.tsx
 import Navbar from "../components/Navbar";
+import axios from 'axios';
 import Footer from "../components/Footer";
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
 import { useState } from "react";
 
 function ProfilePage() {
-    const [bio, setBio] = useState(localStorage.getItem("bio"));
 
-    function handleSubmitForm(e){
+    var user = JSON.parse(localStorage.getItem("user") || '{}');
+
+    const [bio, setBio] = useState(user.bio);
+
+    function handleSubmitForm(e: any){
         e.preventDefault();
         var formData = new FormData(e.target);
         const formJson = Object.fromEntries(formData.entries());
 
         if (bio != formJson.bioField)
         {
-            localStorage.setItem("bio", formJson.bioField as string);
-            console.log(localStorage.getItem("bio"));
+            //localStorage.setItem("bio", formJson.bioField as string);
+            axios.put(`https://localhost:7296/user/${user.id}/me`, {
+                bio: formJson.bioField,
+            })
+        }
+    }
+
+    function checkIfUserTrainer(){
+        console.log(user)
+        if(user.isTrainer){
+          return (
+          <Link
+          to="/profilis/laikas"
+          className="border-r-4 font-semibold block py-2 px-3 text-gray-900 rounded hover:bg-gray-400 bg-gray-300 text-2xl"
+      >
+          Redaguoti darbo laiką
+        </Link>);
         }
     }
     return (
@@ -43,7 +62,7 @@ function ProfilePage() {
                             <div id={"bio"} className="pb-3">
                                 <div className="pb-3">Aprašas</div>
                                 <form method="post" onSubmit={handleSubmitForm}>
-                                    <textarea name={"bioField"} placeholder={"Jūsų aprašas"} rows={6} className="pb-3 w-full resize-none border-2" defaultValue={bio}></textarea>
+                                    <textarea name={"bioField"} placeholder={"Jūsų aprašas"} rows={6} className="pb-3 w-full resize-none border-2" defaultValue={user.bio}></textarea>
                                     <button className="align-right">Išsaugoti</button>
                                 </form>
                             </div>
@@ -63,6 +82,7 @@ function ProfilePage() {
                             >
                                 Vizitų istorija
                             </Link>
+                            {checkIfUserTrainer()}
                         </div>
                     </div>
                 </motion.div>

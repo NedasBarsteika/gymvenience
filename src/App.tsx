@@ -10,6 +10,7 @@ import ProfilePage from './pages/profile';
 import CheckoutPage from './pages/checkout';
 import OrderPage from './pages/orders';
 import SchedulePage from './pages/schedules';
+import SchedulesEdit from './pages/schedulesEdit';
 import AboutPage from './pages/about';
 import TrainerPage from './pages/trainer';
 
@@ -28,6 +29,8 @@ function App() {
           <Route path="/profilis" element={<ProfilePage />} />
           <Route path="/profilis/uzsakymai" element={<OrderPage />} />
           <Route path="/profilis/vizitai" element={<SchedulePage />} />
+
+          <Route path="/profilis/laikas" element={<SchedulesEdit />} />
 
           <Route path="/registracija" element={<SignUpPage />} />
           <Route path="/prisijungimas" element={<LoginPage />} />
