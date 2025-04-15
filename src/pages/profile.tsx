@@ -46,7 +46,7 @@ function ProfilePage() {
           <div className="pb-3">Aprašas</div>
           <form method="post" onSubmit={handleSubmitForm}>
               <textarea name={"bioField"} placeholder={"Jūsų aprašas"} rows={6} className="pb-3 w-full resize-none border-2" defaultValue={user.bio}></textarea>
-              <button className="align-right">Išsaugoti</button>
+              <button className="rounded-lg radius-4 mt-3 hover:cursor-pointer w-25 h-10 hover:bg-gray-400 bg-gray-300">Išsaugoti</button>
           </form>
       </div>);
         }

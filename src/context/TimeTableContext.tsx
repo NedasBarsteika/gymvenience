@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 export interface Reservation {
-    
+    date: Date,
     startTime: Date,
     duration: number,
 }
@@ -9,7 +9,6 @@ export interface Reservation {
 interface TimeTableContextProps {
   Reservations: Reservation[];
   addToTable: (item: Reservation) => void;
-  removeFromTable: (id: number) => void;
   clearTable: () => void;
 }
 
@@ -20,7 +19,7 @@ export const TimeTableProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const addToTable = (slot: Reservation) => {
     setReservations(prev => {
-      const existing = prev.find(i => i.id === slot.id);
+      const existing = prev.find(i => i.date === slot.date && i.startTime === slot.startTime);
       if (existing) {
         return prev.map(i =>
           i
@@ -30,9 +29,6 @@ export const TimeTableProvider: React.FC<{ children: ReactNode }> = ({ children 
     });
   };
 
-  const removeFromTable = (id: number) => {
-    setReservations(prev => prev.filter(i => i.id !== id));
-  };
 
   const clearTable = () => {
     setReservations([]);
@@ -43,7 +39,6 @@ export const TimeTableProvider: React.FC<{ children: ReactNode }> = ({ children 
       value={{
         Reservations,
         addToTable,
-        removeFromTable,
         clearTable,
       }}
     >
