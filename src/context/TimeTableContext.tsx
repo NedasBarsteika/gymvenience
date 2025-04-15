@@ -1,17 +1,14 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 export interface Reservation {
-    id: number,
-    description: string,
+    date: Date,
     startTime: Date,
     duration: number,
-    endTimeDuration: number
 }
 
 interface TimeTableContextProps {
   Reservations: Reservation[];
   addToTable: (item: Reservation) => void;
-  removeFromTable: (id: number) => void;
   clearTable: () => void;
 }
 
@@ -22,7 +19,7 @@ export const TimeTableProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const addToTable = (slot: Reservation) => {
     setReservations(prev => {
-      const existing = prev.find(i => i.startTime === slot.startTime && i.id === slot.id);
+      const existing = prev.find(i => i.date === slot.date && i.startTime === slot.startTime);
       if (existing) {
         return prev.map(i =>
           i
@@ -32,9 +29,6 @@ export const TimeTableProvider: React.FC<{ children: ReactNode }> = ({ children 
     });
   };
 
-  const removeFromTable = (id: number) => {
-    setReservations(prev => prev.filter(i => i.id !== id));
-  };
 
   const clearTable = () => {
     setReservations([]);
@@ -45,7 +39,6 @@ export const TimeTableProvider: React.FC<{ children: ReactNode }> = ({ children 
       value={{
         Reservations,
         addToTable,
-        removeFromTable,
         clearTable,
       }}
     >
@@ -53,11 +46,6 @@ export const TimeTableProvider: React.FC<{ children: ReactNode }> = ({ children 
     </TimeTableContext.Provider>
   );
 };
-
-function getEndDate(date: Date, duration: number) {
-    
-    return new Date(date.getTime() + duration*60000);
-}
 
 export const useTimeTable = () => {
   const context = useContext(TimeTableContext);

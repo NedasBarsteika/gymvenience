@@ -12,7 +12,7 @@ function ProfilePage() {
 
     const [bio, setBio] = useState(user.bio);
 
-    function handleSubmitForm(e: any){
+    async function handleSubmitForm(e: any){
         e.preventDefault();
         var formData = new FormData(e.target);
         const formJson = Object.fromEntries(formData.entries());
@@ -26,7 +26,7 @@ function ProfilePage() {
         }
     }
 
-    function checkIfUserTrainer(){
+    function IfTrainer_TimeTable(){
         console.log(user)
         if(user.isTrainer){
           return (
@@ -36,6 +36,19 @@ function ProfilePage() {
       >
           Redaguoti darbo laiką
         </Link>);
+        }
+    }
+
+    function IfTrainer_Bio(){
+        if(user.isTrainer){
+          return (
+          <div id={"bio"} className="pb-3">
+          <div className="pb-3">Aprašas</div>
+          <form method="post" onSubmit={handleSubmitForm}>
+              <textarea name={"bioField"} placeholder={"Jūsų aprašas"} rows={6} className="pb-3 w-full resize-none border-2" defaultValue={user.bio}></textarea>
+              <button className="rounded-lg radius-4 mt-3 hover:cursor-pointer w-25 h-10 hover:bg-gray-400 bg-gray-300">Išsaugoti</button>
+          </form>
+      </div>);
         }
     }
     return (
@@ -59,13 +72,7 @@ function ProfilePage() {
                             <div className="pb-6">Peržiurėkite savo užsakymus ir valdykite savo paskyros informaciją</div>
 
                             {/*Bio*/}
-                            <div id={"bio"} className="pb-3">
-                                <div className="pb-3">Aprašas</div>
-                                <form method="post" onSubmit={handleSubmitForm}>
-                                    <textarea name={"bioField"} placeholder={"Jūsų aprašas"} rows={6} className="pb-3 w-full resize-none border-2" defaultValue={user.bio}></textarea>
-                                    <button className="align-right">Išsaugoti</button>
-                                </form>
-                            </div>
+                            {IfTrainer_Bio()}
                         </div>
 
                         {/* Right side: panels for extra info */}
@@ -82,7 +89,7 @@ function ProfilePage() {
                             >
                                 Vizitų istorija
                             </Link>
-                            {checkIfUserTrainer()}
+                            {IfTrainer_TimeTable()}
                         </div>
                     </div>
                 </motion.div>

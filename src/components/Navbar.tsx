@@ -19,6 +19,7 @@ const Navbar: React.FC = () => {
       localStorage.removeItem("user");
       document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       setIsAuthenticated(false);
+      localStorage.setItem("user", "");
       setUser(null);
       navigate("/");
     } catch (error) {
