@@ -1,11 +1,9 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 export interface Reservation {
-    id: number,
-    description: string,
+    
     startTime: Date,
     duration: number,
-    endTimeDuration: number
 }
 
 interface TimeTableContextProps {
@@ -22,7 +20,7 @@ export const TimeTableProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const addToTable = (slot: Reservation) => {
     setReservations(prev => {
-      const existing = prev.find(i => i.startTime === slot.startTime && i.id === slot.id);
+      const existing = prev.find(i => i.id === slot.id);
       if (existing) {
         return prev.map(i =>
           i
@@ -53,11 +51,6 @@ export const TimeTableProvider: React.FC<{ children: ReactNode }> = ({ children 
     </TimeTableContext.Provider>
   );
 };
-
-function getEndDate(date: Date, duration: number) {
-    
-    return new Date(date.getTime() + duration*60000);
-}
 
 export const useTimeTable = () => {
   const context = useContext(TimeTableContext);
