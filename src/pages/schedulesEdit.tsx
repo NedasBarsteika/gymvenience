@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import SlotCard from "../components/SlotCard";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
-import { Value } from "react-calendar/src/shared/types.js";
+//import { Value } from "react-calendar/src/shared/types.js";
 
 //const weekDays = ["Pirmadienis", "Antradienis", "Trečiadienis", "Ketvirtadienis", "Penktadienis", "Šeštadienis", "Sekmadienis"];
 
@@ -21,15 +21,15 @@ function SchedulesEdit() {
     async function handleSubmit(e: any) {
         e.preventDefault();
         var durationUpdated = `${Math.floor(duration/60)}:${duration%60}`
+        var newDate = new Date(date.valueOf() + (3*3600*1000)).toISOString().slice(0, 10)
+        
         //var formData = new FormData(e.target);
         //const formJson = Object.fromEntries(formData.entries());
-        console.log(date);
 
-        if (Date.now() < date) {
             await axios.post("https://localhost:7296/api/TrainerAvailability",
                 {
                     trainerId: user.id,
-                    date: date,
+                    date: newDate,
                     startTime: startTime,
                     duration: durationUpdated,
                     gymId: "01df7a45-db31-4065-9f11-ea4af52f06d4"
@@ -39,8 +39,6 @@ function SchedulesEdit() {
                 if (response != 200) {
                 }
             });
-
-        }
     }
 
     return (
