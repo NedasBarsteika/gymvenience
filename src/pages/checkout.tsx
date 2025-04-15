@@ -47,20 +47,48 @@ function CheckoutPage() {
   };
 
   const handleProceedToPayment = async () => {
+    console.log("Proceeding to payment"); // Debug log
+
     try {
-      const response = await axios.post('https://localhost:7296/api/Payment/create-checkout-session', {
+      // Retrieve the auth token from localStorage
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        console.error("No auth token found.");
+        return;
+      }
+
+      // Build the payload including cart items if required by your backend
+      const payload = {
         totalPrice: totalPrice,
-        shippingMethod: selectedShipping.value
+        shippingMethod: selectedShipping.value,
+        items: cartItems.map(item => ({
+          productId: item.id,        // Assuming item.id is the product identifier
+          quantity: item.quantity,
+          price: item.price
+        }))
+      };
+
+      // Send the POST request with the Authorization header
+      const response = await axios.post('https://localhost:7296/api/Payment/create-checkout-session', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
+      
+      console.log("Checkout session response:", response.data);
       const sessionId = response.data.sessionId;
       
-      // Redirect to Stripe Checkout.
+      // Redirect to Stripe Checkout
       const stripe = await stripePromise;
-      const { error } = await stripe!.redirectToCheckout({ sessionId });
+      if (!stripe) {
+        console.error("Stripe failed to load.");
+        return;
+      }
+      const { error } = await stripe.redirectToCheckout({ sessionId });
       if (error) {
         console.error('Stripe redirect error:', error.message);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error creating checkout session:', err);
     }
   };
