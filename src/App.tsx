@@ -13,6 +13,8 @@ import SchedulePage from './pages/schedules';
 import SchedulesEdit from './pages/schedulesEdit';
 import AboutPage from './pages/about';
 import TrainerPage from './pages/trainer';
+import AdminPage from './pages/admin';
+import AdminRoute from './components/AdminRoute';
 
 function App() {
   return (
@@ -35,6 +37,12 @@ function App() {
           <Route path="/registracija" element={<SignUpPage />} />
           <Route path="/prisijungimas" element={<LoginPage />} />
           <Route path="/Atsiskaitymas" element={<CheckoutPage />} />
+
+          <Route path="/admin" element={
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
+          } />
         </Routes>
       </Router>
     </CartProvider>

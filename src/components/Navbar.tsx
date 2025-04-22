@@ -9,6 +9,7 @@ const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState<{ name: string; surname: string } | null>(null);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -19,6 +20,7 @@ const Navbar: React.FC = () => {
       localStorage.removeItem("user");
       document.cookie = "authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       setIsAuthenticated(false);
+      setIsAdmin(false);
       localStorage.setItem("user", "");
       setUser(null);
       navigate("/");
@@ -34,6 +36,10 @@ const Navbar: React.FC = () => {
     if (token && storedUser) {
       setIsAuthenticated(true);
       setUser(JSON.parse(storedUser));
+      const adminStatus = JSON.parse(localStorage.getItem("user") || '{}').isAdmin;
+      if (adminStatus === true) {
+        setIsAdmin(true);
+      }
     }
   }, []);
 
@@ -106,6 +112,9 @@ const Navbar: React.FC = () => {
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
                     <div className="px-4 py-2 text-sm text-gray-700">{user?.name} {user?.surname}</div>
                     <Link to="/profilis" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profilis</Link>
+                    {isAdmin && (
+                      <Link to="/admin" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Admin puslapis</Link>
+                    )}
                     <button onClick={handleSignOut} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 hover:cursor-pointer">Atsijungti</button>
                   </div>
                 )}
