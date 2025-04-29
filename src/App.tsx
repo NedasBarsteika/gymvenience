@@ -8,6 +8,8 @@ import LoginPage from './pages/login';
 import TrainersPage from './pages/trainers';
 import ProfilePage from './pages/profile';
 import CheckoutPage from './pages/checkout';
+import SuccessPage   from './pages/successPage';
+import CancelPage    from './pages/cancelPage';
 import OrderPage from './pages/orders';
 import SchedulePage from './pages/schedules';
 import SchedulesEdit from './pages/schedulesEdit';
@@ -37,7 +39,8 @@ function App() {
           <Route path="/registracija" element={<SignUpPage />} />
           <Route path="/prisijungimas" element={<LoginPage />} />
           <Route path="/Atsiskaitymas" element={<CheckoutPage />} />
-
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/cancel"  element={<CancelPage  />} />
           <Route path="/admin" element={
             <AdminRoute>
               <AdminPage />
