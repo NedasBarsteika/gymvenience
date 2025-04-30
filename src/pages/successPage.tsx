@@ -1,31 +1,60 @@
-import React, { useEffect, useState } from 'react';
-import { useSearchParams, Link }    from 'react-router-dom';
-import { motion }                    from 'framer-motion';
-import Navbar                        from '../components/Navbar';
-import Footer                        from '../components/Footer';
-import axios                         from 'axios';
-import { CheckCircle2 }              from 'lucide-react';
+import React, { useEffect, useState, useRef } from 'react';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import axios from 'axios';
+import { CheckCircle2 } from 'lucide-react';
 
 function SuccessPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const sessionId = searchParams.get('session_id');
   const [message, setMessage] = useState('Užsakymas apdorojamas...');
+  const calledOnce = useRef(false);  // ← guard
 
   useEffect(() => {
+    if (calledOnce.current) return;  // ← never run again
+    calledOnce.current = true;
+
     if (!sessionId) {
       setMessage('Nėra sesijos ID.');
       return;
     }
-    axios.get(`https://localhost:7296/api/Payment/session/${sessionId}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }
-    })
-    .then(({ data }) => {
-      setMessage(`Apmokėjimas sėkmingas! Jūsų užsakymo numeris: #${data.orderId}.`);
-    })
-    .catch(() => {
-      setMessage('Apmokėjimas sėkmingas!');
-    });
-  }, [sessionId]);
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      setMessage('Prašome prisijungti.');
+      navigate('/prisijungimas');
+      return;
+    }
+
+    // 1️⃣ Complete the order (only once!)
+    axios
+      .post(
+        'https://localhost:7296/api/payment/complete-order',
+        { sessionId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      .then(() => {
+        // 2️⃣ Then fetch the saved order to get the ID
+        return axios.get(
+          `https://localhost:7296/api/payment/session/${sessionId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      })
+      .then(({ data }) => {
+        setMessage(
+          `Apmokėjimas sėkmingas! Jūsų užsakymo numeris: #${data.orderId}.`
+        );
+      })
+      .catch((err) => {
+        console.error(err);
+        setMessage(
+          'Apmokėjimas sėkmingas, bet nepavyko gauti užsakymo numerio.'
+        );
+      });
+  }, [sessionId, navigate]);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -38,7 +67,9 @@ function SuccessPage() {
       >
         <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md text-center">
           <CheckCircle2 className="mx-auto text-green-600" size={64} />
-          <h1 className="mt-4 text-3xl font-bold text-gray-800">Mokėjimas sėkmingas!</h1>
+          <h1 className="mt-4 text-3xl font-bold text-gray-800">
+            Mokėjimas sėkmingas!
+          </h1>
           <p className="mt-2 text-gray-600">{message}</p>
           <Link
             to="/"
