@@ -25,7 +25,6 @@ export default function AdminTrainersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modalImage, setModalImage] = useState<string | null>(null);
-  console.log(trainers)
 
   const [cities, setCities] = useState<string[]>([]);
   const [addresses, setAddresses] = useState<string[]>([]);
