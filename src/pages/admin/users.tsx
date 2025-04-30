@@ -20,8 +20,6 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [modalImage, setModalImage] = useState<string | null>(null);
-
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -29,7 +27,7 @@ export default function AdminUsersPage() {
         setLoading(true);
         try {
           const res = await axios.get(
-            `https://localhost:7296/user/trainers`
+            `https://localhost:7296/user/users`
           );
           setUsers(res.data);
           setCurrentPage(1);
