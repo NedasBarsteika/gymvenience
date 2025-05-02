@@ -16,6 +16,7 @@ import TrainerPage from './pages/trainer';
 import AdminPage from './pages/admin/admin';
 import AdminRoute from './components/AdminRoute';
 import AdminTrainersPage from './pages/admin/trainers';
+import AdminOrdersPage from './pages/admin/orders';
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/parduotuve" element={<ShopPage />} />
           <Route path="/treneriai" element={<TrainersPage />} />
-          <Route path="/treneriai/:trainer/Name" element={<TrainerPage />} />
+          <Route path="/treneriai/:trainerName" element={<TrainerPage />} />
 
           <Route path="/apie" element={<AboutPage />} />
 
@@ -48,6 +49,12 @@ function App() {
           <Route path="/admin/treneriai" element={
             <AdminRoute>
               <AdminTrainersPage />
+            </AdminRoute>
+          } />
+
+          <Route path="/admin/uzsakymai" element={
+            <AdminRoute>
+              <AdminOrdersPage />
             </AdminRoute>
           } />
         </Routes>
