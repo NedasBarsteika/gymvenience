@@ -9,6 +9,7 @@ interface Product {
   id: string;
   name: string;
   category: string;
+  description: string;
   quantity: number;
   price: number;
   coverImageUrl: string;
@@ -24,60 +25,103 @@ export default function AdminProductsPage() {
   const [modalImage, setModalImage] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
+  const [modalError, setModalError] = useState<string>("");
   const [form, setForm] = useState({
     name: "",
     category: "",
+    description: "",
     quantity: 0,
     price: 0,
-    coverImageUrl: ""
+    coverImageUrl: "",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const endpoint = search
-          ? `/products/search?search=${search}`
-          : "/products/search";
-        const response = await axios.get(`https://localhost:7296${endpoint}`);
-        setProducts(response.data);
-      } catch (err) {
-        setError("Failed to load products");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchProducts = async () => {
+    try {
+      const endpoint = search
+        ? `/products/search?search=${search}`
+        : "/products/search";
+      const response = await axios.get(`https://localhost:7296${endpoint}`);
+      setProducts(response.data);
+    } catch (err) {
+      setError("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchProducts();
   }, [search]);
 
   const handleDelete = async (productId: string) => {
-    await axios.delete(`https://localhost:7296/product/delete/${productId}`);
+    await axios.delete(`https://localhost:7296/products/${productId}`);
+    alert("Produktas sėkmingai ištrintas!");
     setProducts((prev) => prev.filter((t) => t.id !== productId));
   };
 
   const handleSubmit = async () => {
-    if (editProduct) {
-      await axios.put(`https://localhost:7296/product/update/${editProduct.id}`, form);
-    } else {
-      await axios.post("https://localhost:7296/product/create", form);
+    if (
+      !form.name ||
+      !form.category ||
+      !form.description ||
+      !form.quantity ||
+      !form.price ||
+      !form.coverImageUrl
+    ) {
+      setModalError("Prašome užpildyti visus laukus.");
+      return;
     }
-    setModalOpen(false);
-    setEditProduct(null);
-    setSearch("");
+
+    try {
+      if (editProduct) {
+        await axios.put(
+          `https://localhost:7296/products/${editProduct.id}`,
+          form
+        );
+        alert("Produktas sėkmingai pakoreguotas!");
+      } else {
+        await axios.post("https://localhost:7296/products", form);
+        alert("Produktas sėkmingai sukurtas!");
+      }
+      setModalOpen(false);
+      setEditProduct(null);
+      setModalError("");
+      await fetchProducts();
+    } catch (err) {
+      setModalError("Nepavyko išsaugoti produkto.");
+    }
   };
 
   const openModal = (product?: Product) => {
     if (product) setEditProduct(product);
     else setEditProduct(null);
-    setForm(product || { name: "", category: "", quantity: 0, price: 0, coverImageUrl: "" });
+    setForm(
+      product || {
+        name: "",
+        category: "",
+        description: "",
+        quantity: 0,
+        price: 0,
+        coverImageUrl: "",
+      }
+    );
     setModalOpen(true);
+    setModalError("");
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: name === "price" || name === "quantity" ? Math.max(0, Number(value)) : value }));
+    if (name === "price" || name === "quantity") {
+      if (value === "") {
+        setForm((prev) => ({ ...prev, [name]: value }));
+      } else {
+        setForm((prev) => ({ ...prev, [name]: Math.max(0, Number(value)) }));
+      }
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const paginatedProducts = products.slice(
@@ -130,6 +174,7 @@ export default function AdminProductsPage() {
                     <th className="p-3 text-left">Nuotrauka</th>
                     <th className="p-3 text-left">Pavadinimas</th>
                     <th className="p-3 text-left">Kategorija</th>
+                    <th className="p-3 text-left">Aprašymas</th>
                     <th className="p-3 text-left">Kiekis</th>
                     <th className="p-3 text-left">Kaina</th>
                     <th className="p-3 text-left">Veiksmai</th>
@@ -147,6 +192,7 @@ export default function AdminProductsPage() {
                       </td>
                       <td className="p-3">{t.name}</td>
                       <td className="p-3">{t.category}</td>
+                      <td className="p-3">{t.description}</td>
                       <td className="p-3">{t.quantity}</td>
                       <td className="p-3">{t.price}</td>
                       <td className="p-3 space-x-2 flex">
@@ -175,7 +221,9 @@ export default function AdminProductsPage() {
                   <button
                     key={i + 1}
                     className={`px-3 py-1 rounded ${
-                      currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-gray-200"
+                      currentPage === i + 1
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-200"
                     } cursor-pointer`}
                     onClick={() => setCurrentPage(i + 1)}
                   >
@@ -204,22 +252,72 @@ export default function AdminProductsPage() {
       {modalOpen && (
         <div className="fixed inset-0 bg-white bg-opacity-95 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-96 space-y-4">
-            <h2 className="text-xl font-bold mb-4">{editProduct ? "Redaguoti produktą" : "Naujas produktas"}</h2>
+            <h2 className="text-xl font-bold mb-4">
+              {editProduct ? "Redaguoti produktą" : "Naujas produktas"}
+            </h2>
+
+            {modalError && (
+              <p className="text-red-600 font-semibold text-sm">{modalError}</p>
+            )}
 
             <label>Pavadinimas:</label>
-            <input name="name" value={form.name} onChange={handleFormChange} className="w-full p-2 border rounded" />
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleFormChange}
+              className="w-full p-2 border rounded"
+            />
             <label>Kategorija:</label>
-            <input name="category" value={form.category} onChange={handleFormChange} className="w-full p-2 border rounded" />
+            <input
+              name="category"
+              value={form.category}
+              onChange={handleFormChange}
+              className="w-full p-2 border rounded"
+            />
+            <label>Aprašymas:</label>
+            <input
+              name="description"
+              value={form.description}
+              onChange={handleFormChange}
+              className="w-full p-2 border rounded"
+            />
             <label>Kiekis:</label>
-            <input name="quantity" type="number" value={form.quantity} onChange={handleFormChange} className="w-full p-2 border rounded" />
+            <input
+              name="quantity"
+              type="number"
+              value={form.quantity}
+              onChange={handleFormChange}
+              className="w-full p-2 border rounded"
+            />
             <label>Kaina:</label>
-            <input name="price" type="number" value={form.price} onChange={handleFormChange} className="w-full p-2 border rounded" />
+            <input
+              name="price"
+              type="number"
+              value={form.price}
+              onChange={handleFormChange}
+              className="w-full p-2 border rounded"
+            />
             <label>Nuotraukos nuoroda:</label>
-            <input name="coverImageUrl" value={form.coverImageUrl} onChange={handleFormChange} className="w-full p-2 border rounded" />
+            <input
+              name="coverImageUrl"
+              value={form.coverImageUrl}
+              onChange={handleFormChange}
+              className="w-full p-2 border rounded"
+            />
 
             <div className="flex justify-between pt-2">
-              <button className="bg-gray-400 px-4 py-2 rounded text-white cursor-pointer" onClick={() => setModalOpen(false)}>Atšaukti</button>
-              <button className="bg-blue-600 px-4 py-2 rounded text-white cursor-pointer" onClick={handleSubmit}>{editProduct ? "Atnaujinti" : "Sukurti"}</button>
+              <button
+                className="bg-gray-400 px-4 py-2 rounded text-white cursor-pointer"
+                onClick={() => setModalOpen(false)}
+              >
+                Atšaukti
+              </button>
+              <button
+                className="bg-blue-600 px-4 py-2 rounded text-white cursor-pointer"
+                onClick={handleSubmit}
+              >
+                {editProduct ? "Atnaujinti" : "Sukurti"}
+              </button>
             </div>
           </div>
         </div>
