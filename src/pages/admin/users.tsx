@@ -24,25 +24,57 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-        setLoading(true);
-        try {
-          const res = await axios.get(
-            `https://localhost:7296/user/users`
-          );
-          setUsers(res.data);
-          setCurrentPage(1);
-        } catch {
-          setError("Nepavyko gauti vartotojų");
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchUsers();
+      setLoading(true);
+      try {
+        const res = await axios.get(`https://localhost:7296/user`);
+        setUsers(res.data);
+        setCurrentPage(1);
+      } catch {
+        setError("Nepavyko gauti vartotojų");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
   }, []);
 
   const handleDelete = async (userId: string) => {
-    await axios.delete(`https://localhost:7296/user/delete/${userId}`);
+    await axios.delete(`https://localhost:7296/user/${userId}`);
     setUsers((prev) => prev.filter((t) => t.id !== userId));
+  };
+
+  const checkIfTrainer = async (userId: string): Promise<boolean> => {
+    try {
+      const response = await axios.get(`https://localhost:7296/user/${userId}`);
+      if (response.data?.isTrainer === true) {
+        alert("Vartotojas jau yra treneris");
+      }
+      return response.data?.isTrainer === true;
+    } catch (error) {
+      console.error("Klaida tikrinant ar naudotojas yra treneris:", error);
+      return false;
+    }
+  };
+
+  const handlePromote = async (userId: string) => {
+    try {
+      const isAlreadyTrainer = await checkIfTrainer(userId);
+      if (!isAlreadyTrainer) {
+        await axios.post(`https://localhost:7296/user/${userId}/promote`, {
+          userId: userId,
+        });
+
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId ? { ...user, isTrainer: true } : user
+          )
+        );
+
+        alert("Vartotojas sėkmingai paverstas treneriu!");
+      }
+    } catch (error) {
+      console.error("Klaida paverčiant vartotoją treneriu:", error);
+    }
   };
 
   const renderBooleanCell = (value: boolean) => (
@@ -109,6 +141,12 @@ export default function AdminUsersPage() {
                         >
                           Ištrinti
                         </button>
+                        <button
+                          className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-white cursor-pointer"
+                          onClick={() => handlePromote(t.id)}
+                        >
+                          Paversti treneriu
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -121,7 +159,11 @@ export default function AdminUsersPage() {
                 {Array.from({ length: totalPages }, (_, i) => (
                   <button
                     key={i + 1}
-                    className={`px-3 py-1 rounded ${currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-gray-200"} cursor-pointer`}
+                    className={`px-3 py-1 rounded ${
+                      currentPage === i + 1
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-200"
+                    } cursor-pointer`}
                     onClick={() => setCurrentPage(i + 1)}
                   >
                     {i + 1}
