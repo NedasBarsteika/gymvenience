@@ -8,6 +8,8 @@ import LoginPage from './pages/login';
 import TrainersPage from './pages/trainers';
 import ProfilePage from './pages/profile';
 import CheckoutPage from './pages/checkout';
+import SuccessPage   from './pages/successPage';
+import CancelPage    from './pages/cancelPage';
 import OrderPage from './pages/orders';
 import SchedulePage from './pages/schedules';
 import SchedulesEdit from './pages/schedulesEdit';
@@ -17,6 +19,7 @@ import AdminPage from './pages/admin/admin';
 import AdminRoute from './components/AdminRoute';
 import AdminTrainersPage from './pages/admin/trainers';
 import AdminOrdersPage from './pages/admin/orders';
+import AdminUsersPage from './pages/admin/users';
 
 function App() {
   return (
@@ -39,7 +42,8 @@ function App() {
           <Route path="/registracija" element={<SignUpPage />} />
           <Route path="/prisijungimas" element={<LoginPage />} />
           <Route path="/Atsiskaitymas" element={<CheckoutPage />} />
-
+          <Route path="/success" element={<SuccessPage />} />
+          <Route path="/cancel"  element={<CancelPage  />} />
           <Route path="/admin" element={
             <AdminRoute>
               <AdminPage />
@@ -55,6 +59,12 @@ function App() {
           <Route path="/admin/uzsakymai" element={
             <AdminRoute>
               <AdminOrdersPage />
+            </AdminRoute>
+          } />
+          
+          <Route path="/admin/vartotojai" element={
+            <AdminRoute>
+              <AdminUsersPage />
             </AdminRoute>
           } />
         </Routes>
