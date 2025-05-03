@@ -18,6 +18,7 @@ import TrainerPage from './pages/trainer';
 import AdminPage from './pages/admin/admin';
 import AdminRoute from './components/AdminRoute';
 import AdminTrainersPage from './pages/admin/trainers';
+import AdminReservationsPage from './pages/admin/reservations';
 import AdminOrdersPage from './pages/admin/orders';
 import AdminUsersPage from './pages/admin/users';
 
@@ -56,6 +57,12 @@ function App() {
             </AdminRoute>
           } />
 
+          <Route path="/admin/vizitai" element={
+            <AdminRoute>
+              <AdminReservationsPage />
+            </AdminRoute>
+          } />
+          
           <Route path="/admin/uzsakymai" element={
             <AdminRoute>
               <AdminOrdersPage />
