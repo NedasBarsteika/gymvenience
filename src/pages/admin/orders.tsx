@@ -152,8 +152,7 @@ export default function AdminOrdersPage() {
               <thead>
                 <tr className="bg-gray-100">
                   <th className="p-3 text-left">ID</th>
-                  <th className="p-3 text-left">Vartotojo vardas</th>
-                  <th className="p-3 text-left">Vartotojo pavardė</th>
+                  <th className="p-3 text-left">Vartotojas</th>
                   <th className="p-3 text-left">Data</th>
                   <th className="p-3 text-left">Produktai</th>
                   <th className="p-3 text-left">Bendra suma</th>
@@ -165,8 +164,7 @@ export default function AdminOrdersPage() {
                 {paginatedOrders.map((order) => (
                   <tr key={order.id} className="border-t">
                     <td className="p-3">{order.id}</td>
-                    <td className="p-3">{order.name}</td>
-                    <td className="p-3">{order.surname}</td>
+                    <td className="p-3">{order.name} {order.surname}</td>
                     <td className="p-3">
                       {new Date(order.orderDate).toLocaleString()}
                     </td>
@@ -194,7 +192,7 @@ export default function AdminOrdersPage() {
                         onClick={() => markAsDelivered(order.id)}
                         disabled={order.isDelivered}
                       >
-                        Paversti užsakymą pristatytu
+                        Nustatyti užsakymą pristatytu
                       </button>
                     </td>
                   </tr>
