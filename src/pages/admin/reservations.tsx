@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
-interface Reservation {
+interface ReservationRaw {
   id: string;
   userId: string;
   date: string;
@@ -13,6 +13,20 @@ interface Reservation {
   duration: string;
   trainerId: string;
   gymId: string;
+  isDone: boolean;
+}
+
+interface Reservation {
+  id: string;
+  date: string;
+  time: string;
+  duration: string;
+  userName: string;
+  userSurname: string;
+  trainerName: string;
+  trainerSurname: string;
+  gymName: string;
+  isDone: boolean;
 }
 
 const ITEMS_PER_PAGE = 5;
@@ -23,21 +37,67 @@ export default function AdminReservationsPage() {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const fetchReservations = async () => {
+    setLoading(true);
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || '{}');
+      const res = await axios.get<ReservationRaw[]>("https://localhost:7296/api/Reservation/all", {
+        headers: { Authorization: `Bearer ${user.token}` }
+      });
+
+      const resolved = await Promise.all(
+        res.data.map(async (r) => {
+          let userName = "-";
+          let userSurname = "-";
+          let trainerName = "-";
+          let trainerSurname = "-";
+          let gymName = "-";
+
+          try {
+            const userRes = await axios.get(`https://localhost:7296/user/${r.userId}`);
+            userName = userRes.data.name || "-";
+            userSurname = userRes.data.surname || "-";
+          } catch {}
+
+          try {
+            const trainerRes = await axios.get(`https://localhost:7296/user/${r.trainerId}`);
+            trainerName = trainerRes.data.name || "-";
+            trainerSurname = trainerRes.data.surname || "-";
+            if (trainerRes.data.gym.city !== "" && trainerRes.data.gym.address !== "") {
+              gymName = trainerRes.data.gym.name + ", " + trainerRes.data.gym.address + " (" + trainerRes.data.gym.city + ")" || "-";
+            }
+            else if (trainerRes.data.gym.city !== "") {
+              gymName = trainerRes.data.gym.city || "-";
+            }
+            else {
+              gymName = "-";
+            }
+          } catch {}
+
+          return {
+            id: r.id,
+            date: r.date,
+            time: r.time,
+            duration: r.duration,
+            userName,
+            userSurname,
+            trainerName,
+            trainerSurname,
+            gymName,
+            isDone: r.isDone,
+          };
+        })
+      );
+
+      setReservations(resolved);
+    } catch {
+      setError("Nepavyko gauti rezervacijų");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchReservations = async () => {
-      setLoading(true);
-      try {
-        const user = JSON.parse(localStorage.getItem("user") || '{}');
-        const res = await axios.get("https://localhost:7296/api/Reservation/29276bea-9837-4ff4-9eb2-c4eb147dfb38", {
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
-        setReservations(res.data);
-      } catch {
-        setError("Nepavyko gauti rezervacijų");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchReservations();
   }, []);
 
@@ -69,23 +129,29 @@ export default function AdminReservationsPage() {
               <table className="min-w-full bg-white shadow-md rounded">
                 <thead>
                   <tr className="bg-gray-100">
-                    <th className="p-3 text-left">Naudotojo ID</th>
+                    <th className="p-3 text-left">Vartotojas</th>
                     <th className="p-3 text-left">Data</th>
                     <th className="p-3 text-left">Laikas</th>
                     <th className="p-3 text-left">Trukmė</th>
-                    <th className="p-3 text-left">Trenerio ID</th>
-                    <th className="p-3 text-left">Sporto salės ID</th>
+                    <th className="p-3 text-left">Treneris</th>
+                    <th className="p-3 text-left">Sporto salė</th>
+                    <th className="p-3 text-left">Įvykdyta?</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginated.map((r) => (
                     <tr key={r.id} className="border-t">
-                      <td className="p-3">{r.userId}</td>
+                      <td className="p-3">{r.userName} {r.userSurname}</td>
                       <td className="p-3">{r.date.split("T")[0]}</td>
                       <td className="p-3">{r.time}</td>
                       <td className="p-3">{r.duration}</td>
-                      <td className="p-3">{r.trainerId}</td>
-                      <td className="p-3">{r.gymId}</td>
+                      <td className="p-3">{r.trainerName} {r.trainerSurname}</td>
+                      <td className="p-3">{r.gymName}</td>
+                      <td className="p-3">
+                        <span className={`px-2 py-1 rounded text-white text-sm font-semibold ${r.isDone ? "bg-green-500" : "bg-red-500"}`}>
+                          {r.isDone ? "Taip" : "Ne"}
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
