@@ -18,6 +18,7 @@ import TrainerPage from './pages/trainer';
 import AdminPage from './pages/admin/admin';
 import AdminRoute from './components/AdminRoute';
 import AdminTrainersPage from './pages/admin/trainers';
+import AdminUsersPage from './pages/admin/users';
 
 function App() {
   return (
@@ -51,6 +52,12 @@ function App() {
           <Route path="/admin/treneriai" element={
             <AdminRoute>
               <AdminTrainersPage />
+            </AdminRoute>
+          } />
+
+          <Route path="/admin/vartotojai" element={
+            <AdminRoute>
+              <AdminUsersPage />
             </AdminRoute>
           } />
         </Routes>

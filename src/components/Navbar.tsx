@@ -105,7 +105,7 @@ const Navbar: React.FC = () => {
             {isAuthenticated ? (
               <li className="relative">
                 <button onClick={toggleDropdown} className="flex items-center space-x-1 focus:outline-none hover:cursor-pointer">
-                  <img src="./Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
+                  <img src="/Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
                   <span className="text-white">&#9662;</span>
                 </button>
                 {isDropdownOpen && (
@@ -124,7 +124,7 @@ const Navbar: React.FC = () => {
             ) : (
               <li className="relative">
                 <button onClick={toggleDropdown} className="focus:outline-none hover:cursor-pointer">
-                  <img src="./Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
+                  <img src="/Images/avatar.png" alt="Avatar" className="rounded-full w-7 h-7" />
                 </button>
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">

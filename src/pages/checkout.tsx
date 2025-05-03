@@ -275,3 +275,5 @@ export default function CheckoutPage() {
     </>
   );
 }
+
+export default CheckoutPage;
