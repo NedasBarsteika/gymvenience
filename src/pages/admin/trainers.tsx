@@ -70,12 +70,14 @@ export default function AdminTrainersPage() {
   }, [selectedCity, selectedAddress]);
 
   const handleDemote = async (trainerId: string) => {
-    await axios.post(`https://localhost:7296/user/demote/${trainerId}`);
+    await axios.post(`https://localhost:7296/user/${trainerId}/demote`);
+    alert("Treneris sėkmingai pašalintas");
     setTrainers((prev) => prev.filter((t) => t.id !== trainerId));
   };
 
   const handleDelete = async (trainerId: string) => {
-    await axios.delete(`https://localhost:7296/user/delete/${trainerId}`);
+    await axios.delete(`https://localhost:7296/user/${trainerId}`);
+    alert("Vartotojas sėkmingai ištrintas");
     setTrainers((prev) => prev.filter((t) => t.id !== trainerId));
   };
 
