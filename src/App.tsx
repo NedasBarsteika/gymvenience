@@ -18,6 +18,7 @@ import TrainerPage from './pages/trainer';
 import AdminPage from './pages/admin/admin';
 import AdminRoute from './components/AdminRoute';
 import AdminTrainersPage from './pages/admin/trainers';
+import AdminOrdersPage from './pages/admin/orders';
 import AdminUsersPage from './pages/admin/users';
 
 function App() {
@@ -28,7 +29,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/parduotuve" element={<ShopPage />} />
           <Route path="/treneriai" element={<TrainersPage />} />
-          <Route path="/treneriai/:trainer/Name" element={<TrainerPage />} />
+          <Route path="/treneriai/:trainerName" element={<TrainerPage />} />
 
           <Route path="/apie" element={<AboutPage />} />
 
@@ -55,6 +56,12 @@ function App() {
             </AdminRoute>
           } />
 
+          <Route path="/admin/uzsakymai" element={
+            <AdminRoute>
+              <AdminOrdersPage />
+            </AdminRoute>
+          } />
+          
           <Route path="/admin/vartotojai" element={
             <AdminRoute>
               <AdminUsersPage />
