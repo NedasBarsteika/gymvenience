@@ -40,6 +40,7 @@ export default function AdminUsersPage() {
 
   const handleDelete = async (userId: string) => {
     await axios.delete(`https://localhost:7296/user/${userId}`);
+    alert("Vartotojas sėkmingai ištrintas!")
     setUsers((prev) => prev.filter((t) => t.id !== userId));
   };
 
