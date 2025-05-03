@@ -45,11 +45,13 @@ function App() {
               <AdminPage />
             </AdminRoute>
           } />
+
           <Route path="/admin/treneriai" element={
             <AdminRoute>
               <AdminTrainersPage />
             </AdminRoute>
           } />
+
           <Route path="/admin/vartotojai" element={
             <AdminRoute>
               <AdminUsersPage />
