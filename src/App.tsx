@@ -15,8 +15,9 @@ import SchedulePage from './pages/schedules';
 import SchedulesEdit from './pages/schedulesEdit';
 import AboutPage from './pages/about';
 import TrainerPage from './pages/trainer';
-import AdminPage from './pages/admin';
+import AdminPage from './pages/admin/admin';
 import AdminRoute from './components/AdminRoute';
+import AdminTrainersPage from './pages/admin/trainers';
 
 function App() {
   return (
@@ -44,6 +45,12 @@ function App() {
           <Route path="/admin" element={
             <AdminRoute>
               <AdminPage />
+            </AdminRoute>
+          } />
+
+          <Route path="/admin/treneriai" element={
+            <AdminRoute>
+              <AdminTrainersPage />
             </AdminRoute>
           } />
         </Routes>
