@@ -2,8 +2,112 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
+import ReservationCard from "../components/ReservationCard"
+import axios from 'axios';
+import { useEffect, useState } from "react";
+
+interface ReservationRaw {
+    id: string;
+    userId: string;
+    date: string;
+    time: string;
+    duration: string;
+    trainerId: string;
+    gymId: string;
+    isDone: boolean;
+  }
+  
+  interface Reservation {
+    id: string;
+    date: string;
+    time: string;
+    duration: string;
+    userName: string;
+    userSurname: string;
+    trainerName: string;
+    trainerSurname: string;
+    gymName: string;
+    isDone: boolean;
+  }
+
 
 function SchedulePage() {
+    var user = JSON.parse(localStorage.getItem("user") || '{}');
+    const [reservations, setReservations] = useState<Reservation[]>([]);
+
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+      
+        const fetchReservations = async () => {
+          setLoading(true);
+          try {
+            const user = JSON.parse(localStorage.getItem("user") || '{}');
+            const res = await axios.get<ReservationRaw[]>("https://localhost:7296/api/Reservation/all", {
+              headers: { Authorization: `Bearer ${user.token}` }
+            });
+      
+            const resolved = await Promise.all(
+              res.data.map(async (r) => {
+                let userName = "-";
+                let userSurname = "-";
+                let trainerName = "-";
+                let trainerSurname = "-";
+                let gymName = "-";
+      
+                try {
+                  const userRes = await axios.get(`https://localhost:7296/user/${r.userId}`);
+                  userName = userRes.data.name || "-";
+                  userSurname = userRes.data.surname || "-";
+                } catch {}
+      
+                try {
+                  const trainerRes = await axios.get(`https://localhost:7296/user/${r.trainerId}`);
+                  trainerName = trainerRes.data.name || "-";
+                  trainerSurname = trainerRes.data.surname || "-";
+                  if (trainerRes.data.gym.city !== "" && trainerRes.data.gym.address !== "") {
+                    gymName = trainerRes.data.gym.name + ", " + trainerRes.data.gym.address + " (" + trainerRes.data.gym.city + ")" || "-";
+                  }
+                  else if (trainerRes.data.gym.city !== "") {
+                    gymName = trainerRes.data.gym.city || "-";
+                  }
+                  else {
+                    gymName = "-";
+                  }
+                } catch {}
+      
+                return {
+                  id: r.id,
+                  date: r.date,
+                  time: r.time,
+                  duration: r.duration,
+                  userName,
+                  userSurname,
+                  trainerName,
+                  trainerSurname,
+                  gymName,
+                  isDone: r.isDone,
+                };
+              })
+            );
+      
+            setReservations(resolved);
+          } catch {
+            setError("Nepavyko gauti rezervacijų");
+          } finally {
+            setLoading(false);
+          }
+        };
+      
+        useEffect(() => {
+          fetchReservations();
+        }, []);
+
+        var scheduledReservations = reservations.filter((res: any) => res.isDone === false);
+        var completedReservations = reservations.filter((res: any) => res.isDone === true);
+
+        console.log(completedReservations);
+
     return (
         <>
             <title>Gymvenience | Vizitai</title>
@@ -23,30 +127,34 @@ function SchedulePage() {
                     </div>
 
                     <div className=" w-full justify-center p-4 bg-gray-100 min-h-screen gap-2 flex">
-
-
-
                         <div className="float mb-8 plr-1/10 w-45/100 overflow-auto align-top">
                             <h2 className="text-xl text-center font-semibold mb-2">AKTYVŪS VIZITAI</h2>
 
-                            <div className="bg-white border-2 p-4 rounded-lg shadow max-h-50">
-                                <p className="font-bold">TRENERIS: JOHN SMITH</p>
-                                <p>VIETA: PRAMONĖS GATVĖ 143A GYM</p>
-                                <p>DATA IR LAIKAS: 2025/03/10 14:30 – 15:30</p>
-                                <button className="mt-2 text-red-600 font-semibold">ATŠAUKTI VIZITĄ &gt;</button>
-                            </div>
+                            {scheduledReservations.map((res: any) => (
+                                <ReservationCard
+                                slotId={res.slotId}
+                                trainerName={res.trainerName + " " + res.trainerSurname}
+                                gymAddress={res.gymName}
+                                date={res.date}
+                                time={res.time}
+                                done={res.isDone}
+                            />
+                            ))}
 
                         </div>
-
-                        <div className="float mb-8 pr-1/10 w-45/100 overflow-auto align-top">
+                        <div className="float mb-8 plr-1/10 w-45/100 overflow-auto align-top">
                             <h2 className="text-xl text-center font-semibold mb-2">VIZITŲ ISTORIJA</h2>
 
-                            <div className="bg-white border-2 p-4 rounded-lg shadow max-h-50">
-                                <p className="font-bold">TRENERIS: JOHN SMITH</p>
-                                <p>VIETA: PRAMONĖS GATVĖ 143A GYM</p>
-                                <p>DATA IR LAIKAS: 2025/03/03 08:30 – 09:30</p>
-                                <button className="mt-2 text-blue-600 font-semibold">PALIKTI ATSILIEPIMĄ &gt;</button>
-                            </div>
+                            {completedReservations.map((res: any) => (
+                                <ReservationCard
+                                slotId={res.slotId}
+                                trainerName={res.trainerName + " " + res.trainerSurname}
+                                gymAddress={res.gymName}
+                                date={res.date}
+                                time={res.time}
+                                done={res.isDone}
+                            />))}
+
                         </div>
                     </div>
                 </motion.div>

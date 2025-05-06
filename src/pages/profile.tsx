@@ -19,7 +19,6 @@ function ProfilePage() {
 
         if (bio != formJson.bioField)
         {
-            //localStorage.setItem("bio", formJson.bioField as string);
             axios.put(`https://localhost:7296/user/${user.id}/me`, {
                 bio: formJson.bioField,
             })
