@@ -41,6 +41,12 @@ return (
                     <p className="mt-4 text-lg md:text-2xl">Mantas Maščinskas</p>
                     <p className="mt-4 text-lg md:text-2xl">Kasparas Vaitiekus</p>
                 </div>
+                <div className="max-w-screen-xl mx-auto text-left mt-30">
+                    <h2 className="text-4xl md:text-3xl font-bold">Kontaktai</h2>
+                    <p className="mt-4 text-lg md:text-2xl">GitHub:  <a href="https://github.com/NedasBarsteika/gymvenience/tree/main" target="_blank" rel="noopener noreferrer">https://github.com/NedasBarsteika/gymvenience/tree/main</a></p>
+                    <p className="mt-4 text-lg md:text-2xl">Kontaktinis telefonas: +37069696969</p>
+                    <p className="mt-4 text-lg md:text-2xl">El. paštas: nedas.barsteika@ktu.edu</p>
+                </div>
             </section>
         </motion.div>
 
