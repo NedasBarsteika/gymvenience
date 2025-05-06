@@ -70,12 +70,14 @@ export default function AdminTrainersPage() {
   }, [selectedCity, selectedAddress]);
 
   const handleDemote = async (trainerId: string) => {
-    await axios.post(`https://localhost:7296/user/demote/${trainerId}`);
+    await axios.post(`https://localhost:7296/user/${trainerId}/demote`);
+    alert("Treneris sėkmingai pašalintas");
     setTrainers((prev) => prev.filter((t) => t.id !== trainerId));
   };
 
   const handleDelete = async (trainerId: string) => {
-    await axios.delete(`https://localhost:7296/user/delete/${trainerId}`);
+    await axios.delete(`https://localhost:7296/user/${trainerId}`);
+    alert("Vartotojas sėkmingai ištrintas");
     setTrainers((prev) => prev.filter((t) => t.id !== trainerId));
   };
 
@@ -165,13 +167,13 @@ export default function AdminTrainersPage() {
                       <td className="p-3">{t.gym?.name || "-"}</td>
                       <td className="p-3 space-x-2 flex">
                         <button
-                          className="bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded text-white"
+                          className="bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded text-white cursor-pointer"
                           onClick={() => handleDemote(t.id)}
                         >
                           Pašalinti trenerį
                         </button>
                         <button
-                          className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-white"
+                          className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded text-white cursor-pointer"
                           onClick={() => handleDelete(t.id)}
                         >
                           Ištrinti
