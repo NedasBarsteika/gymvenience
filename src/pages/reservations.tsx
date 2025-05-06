@@ -21,9 +21,6 @@ interface ReservationRaw {
     id: string;
     date: string;
     time: string;
-    duration: string;
-    userName: string;
-    userSurname: string;
     trainerName: string;
     trainerSurname: string;
     gymName: string;
@@ -31,7 +28,7 @@ interface ReservationRaw {
   }
 
 
-function SchedulePage() {
+function ReservationsPage() {
     var user = JSON.parse(localStorage.getItem("user") || '{}');
     const [reservations, setReservations] = useState<Reservation[]>([]);
 
@@ -39,69 +36,68 @@ function SchedulePage() {
     const [error, setError] = useState<string | null>(null);
 
       
-        const fetchReservations = async () => {
-          setLoading(true);
-          try {
-            const user = JSON.parse(localStorage.getItem("user") || '{}');
-            const res = await axios.get<ReservationRaw[]>("https://localhost:7296/api/Reservation/all", {
-              headers: { Authorization: `Bearer ${user.token}` }
-            });
-      
-            const resolved = await Promise.all(
-              res.data.map(async (r) => {
-                let userName = "-";
-                let userSurname = "-";
-                let trainerName = "-";
-                let trainerSurname = "-";
-                let gymName = "-";
-      
-                try {
-                  const userRes = await axios.get(`https://localhost:7296/user/${r.userId}`);
-                  userName = userRes.data.name || "-";
-                  userSurname = userRes.data.surname || "-";
-                } catch {}
-      
-                try {
-                  const trainerRes = await axios.get(`https://localhost:7296/user/${r.trainerId}`);
-                  trainerName = trainerRes.data.name || "-";
-                  trainerSurname = trainerRes.data.surname || "-";
-                  if (trainerRes.data.gym.city !== "" && trainerRes.data.gym.address !== "") {
-                    gymName = trainerRes.data.gym.name + ", " + trainerRes.data.gym.address + " (" + trainerRes.data.gym.city + ")" || "-";
-                  }
-                  else if (trainerRes.data.gym.city !== "") {
-                    gymName = trainerRes.data.gym.city || "-";
-                  }
-                  else {
-                    gymName = "-";
-                  }
-                } catch {}
-      
-                return {
-                  id: r.id,
-                  date: r.date,
-                  time: r.time,
-                  duration: r.duration,
-                  userName,
-                  userSurname,
-                  trainerName,
-                  trainerSurname,
-                  gymName,
-                  isDone: r.isDone,
-                };
-              })
-            );
-      
-            setReservations(resolved);
-          } catch {
-            setError("Nepavyko gauti rezervacijų");
-          } finally {
-            setLoading(false);
-          }
-        };
-      
-        useEffect(() => {
-          fetchReservations();
-        }, []);
+    const fetchReservations = async () => {
+        setLoading(true);
+        try {
+          const res = await axios.get<ReservationRaw[]>(`https://localhost:7296/api/Reservation/${user.id}`, {
+            headers: { Authorization: `Bearer ${user.token}` }
+          });
+    
+          const resolved = await Promise.all(
+            res.data.map(async (r) => {
+              let userName = "-";
+              let userSurname = "-";
+              let trainerName = "-";
+              let trainerSurname = "-";
+              let gymName = "-";
+    
+              try {
+                const userRes = await axios.get(`https://localhost:7296/user/${r.userId}`);
+                userName = userRes.data.name || "-";
+                userSurname = userRes.data.surname || "-";
+              } catch {}
+    
+              try {
+                const trainerRes = await axios.get(`https://localhost:7296/user/${r.trainerId}`);
+                trainerName = trainerRes.data.name || "-";
+                trainerSurname = trainerRes.data.surname || "-";
+                if (trainerRes.data.gym.city !== "" && trainerRes.data.gym.address !== "") {
+                  gymName = trainerRes.data.gym.name + ", " + trainerRes.data.gym.address + " (" + trainerRes.data.gym.city + ")" || "-";
+                }
+                else if (trainerRes.data.gym.city !== "") {
+                  gymName = trainerRes.data.gym.city || "-";
+                }
+                else {
+                  gymName = "-";
+                }
+              } catch {}
+    
+              return {
+                id: r.id,
+                date: r.date.substring(0,10),
+                time: r.time,
+                duration: r.duration,
+                userName,
+                userSurname,
+                trainerName,
+                trainerSurname,
+                gymName,
+                isDone: r.isDone,
+              };
+            })
+          );
+    
+          setReservations(resolved);
+        } catch {
+          setError("Nepavyko gauti rezervacijų");
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      useEffect(() => {
+        fetchReservations();
+      }, []);
 
         var scheduledReservations = reservations.filter((res: any) => res.isDone === false);
         var completedReservations = reservations.filter((res: any) => res.isDone === true);
@@ -132,7 +128,7 @@ function SchedulePage() {
 
                             {scheduledReservations.map((res: any) => (
                                 <ReservationCard
-                                slotId={res.slotId}
+                                slotId={res.id}
                                 trainerName={res.trainerName + " " + res.trainerSurname}
                                 gymAddress={res.gymName}
                                 date={res.date}
@@ -165,4 +161,4 @@ function SchedulePage() {
     );
 
 }
-export default SchedulePage;
+export default ReservationsPage;
