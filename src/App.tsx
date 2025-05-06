@@ -11,7 +11,7 @@ import CheckoutPage from './pages/checkout';
 import SuccessPage   from './pages/successPage';
 import CancelPage    from './pages/cancelPage';
 import OrderPage from './pages/orders';
-import SchedulePage from './pages/schedules';
+import SchedulePage from './pages/reservations';
 import SchedulesEdit from './pages/schedulesEdit';
 import AboutPage from './pages/about';
 import TrainerPage from './pages/trainer';

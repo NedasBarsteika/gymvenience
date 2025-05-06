@@ -1,4 +1,4 @@
-// src/components/ui/SlotCard.tsx
+// src/components/SlotCard.tsx
 import React from "react";
 
 const SlotCard = () => {

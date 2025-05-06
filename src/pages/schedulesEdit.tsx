@@ -14,6 +14,8 @@ import 'react-calendar/dist/Calendar.css';
 function SchedulesEdit() {
     var user = JSON.parse(localStorage.getItem("user") || '{}');
 
+
+
     const [date, setDate] = useState<Value>(new Date());
     const [startTime, setStartTime] = useState("");
     const [duration, setDuration] = useState(0);
@@ -37,6 +39,7 @@ function SchedulesEdit() {
                 }
             ).then(function (response: any) {
                 if (response != 200) {
+                    
                 }
             });
     }
