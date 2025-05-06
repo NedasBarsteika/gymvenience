@@ -86,7 +86,7 @@ function ProfilePage() {
                                 to="/profilis/vizitai"
                                 className="border-r-4 font-semibold block py-2 px-3 text-gray-900 rounded hover:bg-gray-400 bg-gray-300 text-2xl"
                             >
-                                Vizitų istorija
+                                Rezervacijų istorija
                             </Link>
                             {IfTrainer_TimeTable()}
                         </div>

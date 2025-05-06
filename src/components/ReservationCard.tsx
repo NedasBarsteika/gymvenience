@@ -5,13 +5,15 @@ import { useState } from "react";
 interface ReservationCardProps {
     slotId: string
     trainerName: string;
+    clientName: string;
+    isTrainer: boolean;
     gymAddress: string;
     date: string;
     time: string;
     done: boolean
 }
 
-const ReservationCard: React.FC<ReservationCardProps> = ({slotId, trainerName, gymAddress, date, time, done}) => {
+const ReservationCard: React.FC<ReservationCardProps> = ({slotId, trainerName, clientName, isTrainer, gymAddress, date, time, done}) => {
 
     function buttonIfNotDone(){
         if(!done){
@@ -21,7 +23,10 @@ const ReservationCard: React.FC<ReservationCardProps> = ({slotId, trainerName, g
     console.log(slotId)
 
     function isUserOrTrainer(){
-
+        if(isTrainer){
+            return (<p className="font-bold">KLIENTAS: {clientName}</p>)
+        }
+        else return (<p className="font-bold">TRENERIS: {trainerName}</p>)
     }
     async function handleDelete() {
         try{
@@ -35,10 +40,10 @@ const ReservationCard: React.FC<ReservationCardProps> = ({slotId, trainerName, g
     }
     return (
         <div className="bg-white border-2 p-4 rounded-lg shadow max-h-50">
-            <p className="font-bold">TRENERIS: {trainerName}</p>
+            {isUserOrTrainer()}
             <p>{gymAddress}</p>
             <p>DATA IR LAIKAS: {date} {time}</p>
-                   {buttonIfNotDone()}
+            {buttonIfNotDone()}
         </div>
     );
 };

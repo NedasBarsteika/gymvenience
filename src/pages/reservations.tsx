@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import ReservationCard from "../components/ReservationCard"
 import axios from 'axios';
 import { useEffect, useState } from "react";
+import { resolveConfig } from "vite";
 
 interface ReservationRaw {
     id: string;
@@ -38,11 +39,14 @@ function ReservationsPage() {
       
     const fetchReservations = async () => {
         setLoading(true);
+        var resLink = "https://localhost:7296/api/Reservation/"
         try {
-          const res = await axios.get<ReservationRaw[]>(`https://localhost:7296/api/Reservation/${user.id}`, {
+          if(user.isTrainer){
+            resLink = resLink + "trainer/"
+          }
+          const res = await axios.get<ReservationRaw[]>(resLink + user.id , {
             headers: { Authorization: `Bearer ${user.token}` }
           });
-    
           const resolved = await Promise.all(
             res.data.map(async (r) => {
               let userName = "-";
@@ -56,6 +60,8 @@ function ReservationsPage() {
                 userName = userRes.data.name || "-";
                 userSurname = userRes.data.surname || "-";
               } catch {}
+
+
     
               try {
                 const trainerRes = await axios.get(`https://localhost:7296/user/${r.trainerId}`);
@@ -130,6 +136,8 @@ function ReservationsPage() {
                                 <ReservationCard
                                 slotId={res.id}
                                 trainerName={res.trainerName + " " + res.trainerSurname}
+                                clientName={res.userName + " " + res.trainerSurname}
+                                isTrainer={user.isTrainer}
                                 gymAddress={res.gymName}
                                 date={res.date}
                                 time={res.time}
@@ -143,8 +151,10 @@ function ReservationsPage() {
 
                             {completedReservations.map((res: any) => (
                                 <ReservationCard
-                                slotId={res.slotId}
+                                slotId={res.id}
                                 trainerName={res.trainerName + " " + res.trainerSurname}
+                                clientName={res.userName + " " + res.trainerSurname}
+                                isTrainer={user.isTrainer}
                                 gymAddress={res.gymName}
                                 date={res.date}
                                 time={res.time}
