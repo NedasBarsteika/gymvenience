@@ -10,18 +10,21 @@ function ProfilePage() {
 
     var user = JSON.parse(localStorage.getItem("user") || '{}');
 
-    const [bio, setBio] = useState(user.bio);
+    const [bio, setBio] = useState<string>(user.bio || "");
 
+    console.log(user)
     async function handleSubmitForm(e: any){
         e.preventDefault();
         var formData = new FormData(e.target);
         const formJson = Object.fromEntries(formData.entries());
 
-        if (bio != formJson.bioField)
+        if (user.bio !== formJson.bioField)
         {
             axios.put(`https://localhost:7296/user/${user.id}/me`, {
                 bio: formJson.bioField,
             })
+            user.bio = bio;
+            localStorage.setItem("user", JSON.stringify(user));
         }
     }
 
@@ -44,7 +47,7 @@ function ProfilePage() {
           <div id={"bio"} className="pb-3">
           <div className="pb-3">Aprašas</div>
           <form method="post" onSubmit={handleSubmitForm}>
-              <textarea name={"bioField"} placeholder={"Jūsų aprašas"} rows={6} className="pb-3 w-full resize-none border-2" defaultValue={user.bio}></textarea>
+              <textarea name={"bioField"} placeholder={"Jūsų aprašas"} rows={6} className="pb-3 w-full resize-none border-2" value={bio} onChange={e => setBio(e.target.value)} />
               <button className="rounded-lg radius-4 mt-3 hover:cursor-pointer w-25 h-10 hover:bg-gray-400 bg-gray-300">Išsaugoti</button>
           </form>
       </div>);
