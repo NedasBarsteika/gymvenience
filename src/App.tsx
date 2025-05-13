@@ -41,7 +41,6 @@ function App() {
           <Route path="/profilis/vizitai" element={<SchedulePage />} />
 
           <Route path="/profilis/laikas" element={<SchedulesEdit />} />
-          <Route path="/profilis/nuotrauka" element={<ProfilePictureEdit />} />
 
           <Route path="/registracija" element={<SignUpPage />} />
           <Route path="/prisijungimas" element={<LoginPage />} />
