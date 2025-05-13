@@ -4,15 +4,29 @@ import axios from 'axios';
 import Footer from "../components/Footer";
 import { Link } from 'react-router-dom';
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function ProfilePage() {
 
     var user = JSON.parse(localStorage.getItem("user") || '{}');
 
     const [bio, setBio] = useState<string>(user.bio || "");
+    const [totalEarnings, setTotalEarnings] = useState<number>(0);
 
-    console.log(user)
+    // Fetch total earnings for trainer
+    useEffect(() => {
+        if (user.isTrainer) {
+            axios.put(
+                `https://localhost:7296/user/${user.id}/earnings`,
+                {
+                    trainerId: user.id
+                }
+            )
+                .then(response => setTotalEarnings(response.data.earnings))
+                .catch(err => console.error("Failed to fetch earnings", err));
+        }
+    }, []);
+
     async function handleSubmitForm(e: any){
         e.preventDefault();
         var formData = new FormData(e.target);
@@ -29,7 +43,6 @@ function ProfilePage() {
     }
 
     function IfTrainer_TimeTable(){
-        console.log(user)
         if(user.isTrainer){
           return (
           <Link
@@ -40,6 +53,21 @@ function ProfilePage() {
         </Link>);
         }
     }
+
+    function IfTrainer_Rate() {
+        if (user.isTrainer) {
+            return (
+                <Link
+                    to="/profilis/kaina"
+                    className="border-r-4 font-semibold block py-2 px-3 text-gray-900 rounded hover:bg-gray-400 bg-gray-300 text-2xl"
+                >
+                    Redaguoti valandinį įkainį
+                </Link>
+            );
+        }
+        return null;
+    }
+
 
     function IfTrainer_Bio(){
         if(user.isTrainer){
@@ -75,6 +103,14 @@ function ProfilePage() {
 
                             {/*Bio*/}
                             {IfTrainer_Bio()}
+
+                            {/* Total earnings */}
+                            {user.isTrainer && (
+                                <div className="mt-4">
+                                    <div className="font-semibold mb-1">Iš viso uždirbta:</div>
+                                    <div className="text-2xl">€ {totalEarnings ? totalEarnings?.toFixed(2) : 0}</div>
+                                </div>
+                            )}
                         </div>
 
                         {/* Right side: panels for extra info */}
@@ -92,6 +128,7 @@ function ProfilePage() {
                                 Rezervacijų istorija
                             </Link>
                             {IfTrainer_TimeTable()}
+                            {IfTrainer_Rate()}
                         </div>
                     </div>
                 </motion.div>

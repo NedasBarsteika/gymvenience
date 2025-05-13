@@ -22,6 +22,7 @@ import AdminProductsPage from './pages/admin/products';
 import AdminReservationsPage from './pages/admin/reservations';
 import AdminOrdersPage from './pages/admin/orders';
 import AdminUsersPage from './pages/admin/users';
+import HourlyRateEdit from './pages/hourlyRateEdit';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/profilis/vizitai" element={<SchedulePage />} />
 
           <Route path="/profilis/laikas" element={<SchedulesEdit />} />
+          <Route path="/profilis/kaina" element={<HourlyRateEdit />} />
 
           <Route path="/registracija" element={<SignUpPage />} />
           <Route path="/prisijungimas" element={<LoginPage />} />
