@@ -4,7 +4,6 @@ import axios from 'axios';
 import Footer from "../components/Footer";
 import { useState } from "react";
 import { motion } from 'framer-motion';
-import SlotCard from "../components/SlotCard";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 //import { Value } from "react-calendar/src/shared/types.js";
@@ -24,9 +23,6 @@ function SchedulesEdit() {
         e.preventDefault();
         var durationUpdated = `${Math.floor(duration/60)}:${duration%60}`
         var newDate = new Date(date.valueOf() + (3*3600*1000)).toISOString().slice(0, 10)
-        
-        //var formData = new FormData(e.target);
-        //const formJson = Object.fromEntries(formData.entries());
 
             await axios.post("https://localhost:7296/api/TrainerAvailability",
                 {
@@ -38,8 +34,14 @@ function SchedulesEdit() {
 
                 }
             ).then(function (response: any) {
-                if (response != 200) {
-                    
+                if (response === 200) {
+                    alert(`Rezervacijos laikas įterptas sėkmingai\n
+                        Data:${newDate},\n
+                        Pradžios laikas:${startTime},\n
+                        Trukmė:${durationUpdated}`)
+                }
+                else{
+                    alert("Įterpiant rezervacijos laiką įvyko klaida")
                 }
             });
     }
@@ -77,14 +79,6 @@ function SchedulesEdit() {
                                         <input id="duration" type="number" placeholder="30" className="p-2 border-1 border-gray-600 rounded" onChange={(e:any) => setDuration(e.target.value)} value={duration}></input>
                                     </div>
                                     </div>
-                                    {/*weekDays.map((day) =>
-                                        <div className="flex align-center h-1/10">
-                                            <div>
-                                                <p className="p-5 text-[24px]">{day}</p>
-                                                <button onClick={appendSlot} className="border-2 rounded-lg w-20 text-[20px]">+</button>
-                                            </div>
-                                            <SlotCard />
-                                        </div>)*/}
                                 </div>
                             </div>
                             <button className="rounded-lg radius-4 ml-5 mt-3 hover:cursor-pointer w-30 h-10 hover:bg-gray-400 bg-gray-300" onClick={handleSubmit}>Išsaugoti</button>
