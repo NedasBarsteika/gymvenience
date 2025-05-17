@@ -46,96 +46,109 @@ function SchedulesEdit() {
             setLoading(false)
         };
 
-};
+    };
 
-useEffect(() => {
-    fetchAvailabilities();
-}, []);
+    useEffect(() => {
+        fetchAvailabilities();
+    }, []);
 
-async function handleSubmit(e: any) {
-    e.preventDefault();
-    var durationUpdated = `${Math.floor(duration / 60)}:${duration % 60}`
-    var newDate = new Date(date.valueOf() + (3 * 3600 * 1000)).toISOString().slice(0, 10)
+    async function handleSubmit(e: any) {
+        e.preventDefault();
+        var durationUpdated = `${Math.floor(duration / 60)}:${duration % 60}`
+        var newDate = new Date(date.valueOf() + (3 * 3600 * 1000)).toISOString().slice(0, 10)
 
-    try {
-        await axios.post("https://localhost:7296/api/TrainerAvailability",
-            {
-                trainerId: user.id,
-                date: newDate,
-                startTime: startTime,
-                duration: durationUpdated,
-                gymId: "01df7a45-db31-4065-9f11-ea4af52f06d4"
-    
-            })
+        try {
+            await axios.post("https://localhost:7296/api/TrainerAvailability",
+                {
+                    trainerId: user.id,
+                    date: newDate,
+                    startTime: startTime,
+                    duration: durationUpdated,
+                    gymId: "01df7a45-db31-4065-9f11-ea4af52f06d4"
+
+                })
             alert(`Rezervacijos laikas įterptas sėkmingai\n
                 Data: ${newDate}\n
                 Pradžios laikas: ${startTime}\n
                 Trukmė: ${Math.floor(duration / 60)}h ${duration % 60}min`);
             window.location.reload();
+        }
+        catch {
+            alert("Įterpiant rezervacijos laiką įvyko klaida")
+        }
     }
-    catch {
-        alert("Įterpiant rezervacijos laiką įvyko klaida")
-    }
-}
 
-return (
-    <>
-        <title>Gymvenience | Darbo Laikas</title>
+    return (
+        <>
+            <title>Gymvenience | Darbo Laikas</title>
 
-        <div className="flex flex-col min-h-screen relative">
-            <Navbar />
+            <div className="flex flex-col min-h-screen relative">
+                <Navbar />
 
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 1 }}
-                className=""
-            >
-                <div className="flex-nowrap columns-2 min-h-screen relative">
-                    {/*  Left side: weekday and time selections*/}
-                    <div className="absolute top-10 left-1/20 p-3 w-4/10 flex flex-col">
-                        <div className="text-[50px] pb-3">Darbo Laikas</div>
-                        <div className="pb-6">Įterpkite vietą rezervacijai su jumis čia</div>
-                        <div className="pb-3 ml-5 border-2">
-                            <div className="grid grid-cols-2">
-                                <Calendar onChange={setDate} minDate={new Date(Date.now())} minDetail="month" value={date} />
-                                <div>
-                                    <div className="grid grid-rows-2">
-                                        <p className="align-middle">Vizito laikas</p>
-                                        <input id="startTime" type="time" placeholder="9:00" className="p-2 border-1 border-gray-600 rounded" onChange={(e: any) => setStartTime(e.target.value)} value={startTime}></input>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className=""
+                >
+                    <div className="flex-nowrap columns-2 min-h-screen relative">
+                        {/*  Left side: weekday and time selections*/}
+                        <div className="absolute top-10 left-1/20 p-3 w-4/10 flex flex-col">
+                            <div className="text-[50px] pb-3">Darbo Laikas</div>
+                            <div className="pb-6">Įterpkite vietą rezervacijai su jumis čia</div>
+                            <div className="pb-3 ml-5 border-2">
+                                <div className="grid grid-cols-2">
+                                    <Calendar onChange={setDate} minDate={new Date(Date.now())} minDetail="month" value={date} />
+                                    <div>
+                                        <div className="grid grid-rows-2">
+                                            <p className="align-middle">Vizito laikas</p>
+                                            <input id="startTime" type="time" placeholder="9:00" className="p-2 border-1 border-gray-600 rounded" onChange={(e: any) => setStartTime(e.target.value)} value={startTime}></input>
 
-                                    </div>
-                                    <div className="grid grid-rows-2">
-                                        <p className="text-center align-text-bottom">Trukmė (Minutėmis)</p>
-                                        <input id="duration" type="number" placeholder="0" className="p-2 border-1 border-gray-600 rounded" onChange={(e: any) => setDuration(e.target.value)} value={duration}></input>
+                                        </div>
+                                        <div className="grid grid-rows-2">
+                                            <p className="text-center align-text-bottom">Trukmė (Minutėmis)</p>
+                                            <input id="duration" type="number" placeholder="0" className="p-2 border-1 border-gray-600 rounded" onChange={(e: any) => setDuration(e.target.value)} value={duration}></input>
+                                        </div>
                                     </div>
                                 </div>
+                                <div>
+                                </div>
                             </div>
-                            <div>
-                            </div>
+                            <div></div>
+                            <button className="rounded-lg radius-4 ml-5 mt-3 hover:cursor-pointer w-30 h-10 hover:bg-gray-400 bg-gray-300" onClick={handleSubmit}>Išsaugoti</button>
                         </div>
-                        <div></div>
-                        <button className="rounded-lg radius-4 ml-5 mt-3 hover:cursor-pointer w-30 h-10 hover:bg-gray-400 bg-gray-300" onClick={handleSubmit}>Išsaugoti</button>
-                    </div>
 
-                    {/* Right side: exception day selection */}
-                    <div className="absolute flex flex-col top-10 right-1/20 h-8/10 w-4/10 gap-2 overflow-scroll">
-                        {availabilities.map((slot: Availability) => (
-                            <AvailabilityListCard
-                            slotId={slot.id}
-                            date={slot.date}
-                            time={slot.startTime}
-                            duration={slot.duration}
-                        />))}
-                    </div>
-                </div>
-            </motion.div>
+                        {/* Right side: exception day selection */}
+                        <div className="absolute flex flex-col top-10 right-1/20 h-8/10 w-4/10 gap-2 overflow-scroll">
+                            {availabilities.sort(function (slot1, slot2) {
+                                let af = slot1.date;
+                                let bf = slot2.date;
+                                let as = slot1.startTime;
+                                let bs = slot2.startTime;
 
-            <Footer />
-        </div>
-    </>
-);
+                                if (af == bf) {
+                                    return (as < bs) ? -1 : (as > bs) ? 1 : 0;
+                                }
+                                else {
+                                    return (af < bf) ? -1 : 1;
+                                }
+                            }).map((slot: Availability) => (
+                                    <AvailabilityListCard
+                                    slotId={slot.id}
+                                    date={slot.date}
+                                    time={slot.startTime}
+                                    duration={slot.duration} 
+                                    />
+                            ))}
+                        </div>
+                    </div>
+                </motion.div>
+
+                <Footer />
+            </div>
+        </>
+    )
 }
 
 export default SchedulesEdit;
