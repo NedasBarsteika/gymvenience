@@ -50,6 +50,7 @@ function SchedulesEdit() {
 
     useEffect(() => {
         fetchAvailabilities();
+        
     }, []);
 
     async function handleSubmit(e: any) {
@@ -108,6 +109,7 @@ function SchedulesEdit() {
                                         </div>
                                         <div className="grid grid-rows-2">
                                             <p className="text-center align-text-bottom">Trukmė (Minutėmis)</p>
+                                            
                                             <input id="duration" type="number" placeholder="0" className="p-2 border-1 border-gray-600 rounded" onChange={(e: any) => setDuration(e.target.value)} value={duration}></input>
                                         </div>
                                     </div>
@@ -119,28 +121,21 @@ function SchedulesEdit() {
                             <button className="rounded-lg radius-4 ml-5 mt-3 hover:cursor-pointer w-30 h-10 hover:bg-gray-400 bg-gray-300" onClick={handleSubmit}>Išsaugoti</button>
                         </div>
 
-                        {/* Right side: exception day selection */}
+                        {/* Right side: created availability list */}
                         <div className="absolute flex flex-col top-10 right-1/20 h-8/10 w-4/10 gap-2 overflow-scroll">
-                            {availabilities.sort(function (slot1, slot2) {
-                                let af = slot1.date;
-                                let bf = slot2.date;
-                                let as = slot1.startTime;
-                                let bs = slot2.startTime;
-
-                                if (af == bf) {
-                                    return (as < bs) ? -1 : (as > bs) ? 1 : 0;
-                                }
-                                else {
-                                    return (af < bf) ? -1 : 1;
-                                }
-                            }).map((slot: Availability) => (
-                                    <AvailabilityListCard
-                                    slotId={slot.id}
-                                    date={slot.date}
-                                    time={slot.startTime}
-                                    duration={slot.duration} 
-                                    />
-                            ))}
+                            {availabilities.sort((slot1, slot2) => 
+                            slot1.date == slot2.date ?
+                                (((slot1.startTime > slot2.startTime) ?
+                                 -1 : (slot1.startTime < slot2.startTime) ?
+                                     1 : 0)) : ((slot1.date > slot2.date) ? -1 : 1))
+                            .map((slot: Availability) => (
+                                <AvailabilityListCard
+                                slotId={slot.id}
+                                date={slot.date}
+                                time={slot.startTime}
+                                duration={slot.duration} 
+                                />
+                        ))}                   
                         </div>
                     </div>
                 </motion.div>
