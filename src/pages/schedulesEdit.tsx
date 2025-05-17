@@ -34,11 +34,11 @@ function SchedulesEdit() {
 
                 }
             ).then(function (response: any) {
-                if (response === 200) {
+                if (response.status == 200) {
                     alert(`Rezervacijos laikas įterptas sėkmingai\n
-                        Data:${newDate},\n
-                        Pradžios laikas:${startTime},\n
-                        Trukmė:${durationUpdated}`)
+                        Data: ${newDate},\n
+                        Pradžios laikas: ${startTime},\n
+                        Trukmė: ${durationUpdated}`)
                 }
                 else{
                     alert("Įterpiant rezervacijos laiką įvyko klaida")

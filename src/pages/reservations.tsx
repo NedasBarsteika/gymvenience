@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import ReservationCard from "../components/ReservationCard"
 import axios from 'axios';
 import { useEffect, useState } from "react";
-import { resolveConfig } from "vite";
 
 interface ReservationRaw {
     id: string;
