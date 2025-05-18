@@ -31,9 +31,9 @@ function HomePage() {
             <img src="/Images/trainer.jpg" alt="Treneriai" className="mx-auto mb-4 h-55 object-cover" />
             <h2 className="text-xl font-bold text-black mt-10">Treneriai</h2>
           </a>
-          <a href="/kontaktai" className="p-6 border rounded-xl shadow-lg text-center hover:shadow-xl block bg-gray-100">
+          <a href="/apie" className="p-6 border rounded-xl shadow-lg text-center hover:shadow-xl block bg-gray-100">
             <img src="/Images/phone.webp" alt="Kontaktai" className="mx-auto mb-4 h-55 object-cover" />
-            <h2 className="text-xl font-bold text-black mt-10">Kontaktai</h2>
+            <h2 className="text-xl font-bold text-black mt-10">Apie mus</h2>
           </a>
         </section>
       </motion.div>
