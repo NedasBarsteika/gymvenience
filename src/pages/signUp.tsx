@@ -147,7 +147,7 @@ function SignUpPage() {
             <div className="w-full max-w-md text-center mt-2">
               <button
                 onClick={() => navigate("/prisijungimas")}
-                className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700"
+                className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700 cursor-pointer"
               >
                 Prisijungti
               </button>
