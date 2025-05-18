@@ -105,7 +105,7 @@ export default function TrainersPage() {
                         <p className="text-center text-lg text-red-500">{error}</p>
                     ) : (
                         trainers.map((trainer) => (
-                            <Link key={trainer.id} to={`/treneriai/${trainer.name.toLowerCase()}-${trainer.surname.toLowerCase()}`}>
+                            <Link key={trainer.id} to={`/treneriai/${trainer.name.toLowerCase()}-${trainer.surname.toLowerCase()}`} state={{ trainerId: trainer.id }}>
                                 <Card className="bg-gray-800 text-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                                     <img src={trainer.imageUrl} alt={trainer.name} className="w-full h-60 object-cover" />
                                     <CardContent className="p-5">

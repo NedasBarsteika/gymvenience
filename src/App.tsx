@@ -23,6 +23,9 @@ import AdminReservationsPage from './pages/admin/reservations';
 import AdminOrdersPage from './pages/admin/orders';
 import AdminUsersPage from './pages/admin/users';
 import ProfilePictureEdit from './pages/profilePictureEdit';
+import ReservationPage from './pages/ReservationPage';
+import ReservationSuccessPage from './pages/ReservationSuccessPage';
+import ReservationCancelPage from './pages/ReservationCancelPage';
 
 function App() {
   return (
@@ -33,7 +36,9 @@ function App() {
           <Route path="/parduotuve" element={<ShopPage />} />
           <Route path="/treneriai" element={<TrainersPage />} />
           <Route path="/treneriai/:trainerName" element={<TrainerPage />} />
-
+          <Route path="/Reservacija" element={<ReservationPage />} /> 
+          <Route path="/reservation-cancel" element={<ReservationCancelPage />} />
+          <Route path="/reservation-success" element={<ReservationSuccessPage />} />
           <Route path="/apie" element={<AboutPage />} />
 
           <Route path="/profilis" element={<ProfilePage />} />
