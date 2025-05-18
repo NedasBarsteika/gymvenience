@@ -22,6 +22,7 @@ import AdminProductsPage from './pages/admin/products';
 import AdminReservationsPage from './pages/admin/reservations';
 import AdminOrdersPage from './pages/admin/orders';
 import AdminUsersPage from './pages/admin/users';
+import ProfilePictureEdit from './pages/profilePictureEdit';
 
 function App() {
   return (
