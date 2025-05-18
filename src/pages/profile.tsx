@@ -5,13 +5,12 @@ import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useState } from "react";
 import ProfilePictureEdit from "./profilePictureEdit";
 
 function ProfilePage() {
   var user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const [bio, setBio] = useState(user.bio);
+  const [bio, setBio] = useState<string>(user.bio || "");
   const [totalEarnings, setTotalEarnings] = useState<number>(0);
   const [imageUrl, setImageUrl] = useState<string>(user.imageUrl || "");
 
@@ -30,19 +29,18 @@ function ProfilePage() {
         .catch((err) => console.error("Failed to fetch earnings", err));
     }
   }, []);
-    
-    async function handleSubmitForm(e: any) {
+
+  async function handleSubmitForm(e: any) {
     e.preventDefault();
     var formData = new FormData(e.target);
     const formJson = Object.fromEntries(formData.entries());
 
-    if (bio != formJson.bioField) {
-      axios.put(`https://localhost:7296/user/${user.id}/me`, {
-        bio: formJson.bioField,
-      });
-      user.bio = bio;
-      localStorage.setItem("user", JSON.stringify(user));
-    }
+    axios.put(`https://localhost:7296/user/${user.id}/me`, {
+      bio: formJson.bioField,
+    });
+    user.bio = bio;
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Aprašymas sėkmingai pakeistas!");
   }
 
   const handleRateSubmit = async (e: React.FormEvent) => {
@@ -112,7 +110,8 @@ function ProfilePage() {
       );
     }
     return null;
-    
+  }
+
   function IfTrainer_Image() {
     if (user.isTrainer) {
       return (
@@ -153,8 +152,6 @@ function ProfilePage() {
               value={bio}
               onChange={(e) => setBio(e.target.value)}
             />
-              defaultValue={user.bio}
-            ></textarea>
             <button className="rounded-lg radius-4 mt-3 hover:cursor-pointer w-25 h-10 hover:bg-gray-400 bg-gray-300">
               Išsaugoti
             </button>
@@ -168,7 +165,7 @@ function ProfilePage() {
     <>
       <title>Gymvenience | Profilis</title>
 
-      <div className="flex flex-col min-h-screen relative">
+      <div className="flex flex-col min-h-screen">
         <Navbar />
 
         <motion.div
@@ -176,11 +173,11 @@ function ProfilePage() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
-          className=""
+          className="flex-1 pb-40"
         >
-          <div className="flex-nowrap columns-2 min-h-screen relative">
+          <div className="flex-nowrap columns-2 min-h-screen">
             {/*  Left side: basic profile information*/}
-            <div className="absolute top-10 left-1/20 w-4/10">
+            <div className="absolute mt-10 left-1/20 w-4/10">
               <div className="text-[50px] pb-3">Mano Paskyra</div>
               <div className="pb-6">
                 Peržiurėkite savo užsakymus ir valdykite savo paskyros
@@ -189,7 +186,7 @@ function ProfilePage() {
 
               {/*Image*/}
               {IfTrainer_Image()}
-        
+
               {/*Bio*/}
               {IfTrainer_Bio()}
 
@@ -207,7 +204,7 @@ function ProfilePage() {
             </div>
 
             {/* Right side: panels for extra info */}
-            <div className="absolute flex flex-col top-10 right-1/20 w-4/10 gap-2">
+            <div className="absolute flex flex-col mt-15 right-1/20 w-4/10 gap-2">
               <Link
                 to="/profilis/uzsakymai"
                 className="border-r-4 font-semibold block py-2 px-3 text-gray-900 rounded hover:bg-gray-400 bg-gray-300 text-2xl"
