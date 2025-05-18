@@ -8,15 +8,14 @@ import Calendar from "../components/Calendar";
 
 interface Slot {
   id: string;
-  date: string;        // ISO date
-  startTime: string;   // "HH:mm:ss"
-  duration: string;    // "HH:mm"
+  date: string; // ISO date
+  startTime: string; // "HH:mm:ss"
+  duration: string; // "HH:mm"
   reserved: boolean;
 }
 interface LocationState {
   trainerId: string;
 }
-
 
 function TrainerPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -30,8 +29,8 @@ function TrainerPage() {
     if (!trainerId) return;
     axios
       .get(`https://localhost:7296/user/${trainerId}`)
-      .then(res => setTrainer(res.data))
-      .catch(err => console.error("Failed to fetch trainer:", err));
+      .then((res) => setTrainer(res.data))
+      .catch((err) => console.error("Failed to fetch trainer:", err));
   }, [trainerId]);
 
   useEffect(() => {
@@ -39,50 +38,53 @@ function TrainerPage() {
     const formattedDate = selectedDate.toISOString().split("T")[0];
 
     axios
-      .get<Slot[]>(`https://localhost:7296/api/TrainerAvailability/${trainerId}/all`)
-      .then(res => {
-        const todaySlots = res.data.filter(s => {
+      .get<Slot[]>(
+        `https://localhost:7296/api/TrainerAvailability/${trainerId}/all`
+      )
+      .then((res) => {
+        const todaySlots = res.data.filter((s) => {
           const slotDay = new Date(s.date).toISOString().split("T")[0];
           return slotDay === formattedDate && !s.reserved;
         });
         setSlots(todaySlots);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Failed to fetch times:", err);
         setSlots([]);
       });
   }, [selectedDate, trainerId]);
 
-  const WorkTimes = slots.length > 0 ? (
-    slots.map((slot) => {
-      const start = slot.startTime.substring(0, 5);
-      const end = calculateEndTime(slot.startTime, slot.duration);
+  const WorkTimes =
+    slots.length > 0 ? (
+      slots.map((slot) => {
+        const start = slot.startTime.substring(0, 5);
+        const end = calculateEndTime(slot.startTime, slot.duration);
 
-      return (
-        <button
-          key={slot.id}
-          className="w-full p-4 border bg-white text-center rounded hover:bg-blue-100 cursor-pointer"
-          onClick={() =>
-            navigate("/Reservacija", {
-              state: {
-                trainerId,
-                slotId: slot.id,
-                date: slot.date,
-                startTime: slot.startTime,
-                duration: slot.duration,
-              },
-            })
-          }
-        >
-          {start}–{end}
-        </button>
-      );
-    })
-  ) : (
-    <p className="text-gray-500 text-sm mt-2">
-      Šiai dienai laisvų laikų nėra
-    </p>
-  );
+        return (
+          <button
+            key={slot.id}
+            className="w-full p-4 border bg-white text-center rounded hover:bg-blue-100 cursor-pointer"
+            onClick={() =>
+              navigate("/Reservacija", {
+                state: {
+                  trainerId,
+                  slotId: slot.id,
+                  date: slot.date,
+                  startTime: slot.startTime,
+                  duration: slot.duration,
+                },
+              })
+            }
+          >
+            {start}–{end}
+          </button>
+        );
+      })
+    ) : (
+      <p className="text-gray-500 text-sm mt-2">
+        Šiai dienai laisvų laikų nėra
+      </p>
+    );
 
   function capitalize(str: string) {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -104,7 +106,9 @@ function TrainerPage() {
           <div className="max-w-screen-xl mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-6xl font-bold">
               {trainer
-                ? `${capitalize(trainer.name)} ${capitalize(trainer.surname)} laikai`
+                ? `${capitalize(trainer.name)} ${capitalize(
+                    trainer.surname
+                  )} laikai`
                 : "Trenerio laikai"}
             </h1>
             <p className="mt-4 text-lg md:text-2xl">
@@ -129,14 +133,20 @@ function TrainerPage() {
                 <p className="text-center text-gray-600">
                   Reitingas: ⭐ {trainer.rating}
                 </p>
-                <p className="text-sm text-gray-700">{trainer.bio}</p>
+                <p className="text-sm text-gray-700 text-center">{trainer.bio}</p>
                 {trainer.gym && (
                   <div className="text-sm text-gray-500 mt-2 text-center">
                     Sporto klubas:
-                    <br />
-                    <strong>{trainer.gym.name}</strong>
-                    <br />
-                    {trainer.gym.city}, {trainer.gym.address}
+                    {trainer.gym.name && (
+                      <>
+                        <br />
+                        <strong>{trainer.gym.name}</strong>
+                      </>
+                    )}
+                    {(trainer.gym.city || trainer.gym.address) && <br />}
+                    {[trainer.gym.city, trainer.gym.address]
+                      .filter(Boolean)
+                      .join(", ")}
                   </div>
                 )}
               </>
@@ -166,9 +176,7 @@ function TrainerPage() {
                     day: "numeric",
                   })}
                 </p>
-                <div className="grid grid-cols-1 gap-2 mt-2">
-                  {WorkTimes}
-                </div>
+                <div className="grid grid-cols-1 gap-2 mt-2">{WorkTimes}</div>
               </>
             )}
           </div>

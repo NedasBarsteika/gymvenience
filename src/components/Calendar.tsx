@@ -108,7 +108,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateSelect, trainerId }) => {
           onClick={goToCurrentMonth}
           className="px-3 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300"
         >
-          ⬅ Šis
+          ⬅ Praeitas
         </button>
 
         <h2 className="text-2xl font-bold capitalize text-center">
