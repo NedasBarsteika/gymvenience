@@ -5,12 +5,15 @@ import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useState } from "react";
+import ProfilePictureEdit from "./profilePictureEdit";
 
 function ProfilePage() {
   var user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  const [bio, setBio] = useState<string>(user.bio || "");
+  const [bio, setBio] = useState(user.bio);
   const [totalEarnings, setTotalEarnings] = useState<number>(0);
+  const [imageUrl, setImageUrl] = useState<string>(user.imageUrl || "");
 
   const [rate, setRate] = useState<number>(user.hourlyRate || 0);
   const [rateLoading, setRateLoading] = useState<boolean>(false);
@@ -27,13 +30,13 @@ function ProfilePage() {
         .catch((err) => console.error("Failed to fetch earnings", err));
     }
   }, []);
-
-  async function handleSubmitForm(e: any) {
+    
+    async function handleSubmitForm(e: any) {
     e.preventDefault();
     var formData = new FormData(e.target);
     const formJson = Object.fromEntries(formData.entries());
 
-    if (user.bio !== formJson.bioField) {
+    if (bio != formJson.bioField) {
       axios.put(`https://localhost:7296/user/${user.id}/me`, {
         bio: formJson.bioField,
       });
@@ -109,6 +112,31 @@ function ProfilePage() {
       );
     }
     return null;
+    
+  function IfTrainer_Image() {
+    if (user.isTrainer) {
+      return (
+        <div className="mb-5">
+          {imageUrl ? (
+            <img
+              src={imageUrl}
+              alt="Profilio nuotrauka"
+              className="w-32 h-32 rounded-full mb-4"
+            />
+          ) : (
+            <div className="w-32 h-32 bg-gray-200 rounded-full mb-4" />
+          )}
+
+          <ProfilePictureEdit
+            onUploadSuccess={(url) => {
+              setImageUrl(url);
+              user.imageUrl = url;
+              localStorage.setItem("user", JSON.stringify(user));
+            }}
+          />
+        </div>
+      );
+    }
   }
 
   function IfTrainer_Bio() {
@@ -125,6 +153,8 @@ function ProfilePage() {
               value={bio}
               onChange={(e) => setBio(e.target.value)}
             />
+              defaultValue={user.bio}
+            ></textarea>
             <button className="rounded-lg radius-4 mt-3 hover:cursor-pointer w-25 h-10 hover:bg-gray-400 bg-gray-300">
               Išsaugoti
             </button>
@@ -133,6 +163,7 @@ function ProfilePage() {
       );
     }
   }
+
   return (
     <>
       <title>Gymvenience | Profilis</title>
@@ -156,6 +187,9 @@ function ProfilePage() {
                 informaciją
               </div>
 
+              {/*Image*/}
+              {IfTrainer_Image()}
+        
               {/*Bio*/}
               {IfTrainer_Bio()}
 
