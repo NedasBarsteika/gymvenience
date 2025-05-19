@@ -32,6 +32,7 @@ export default function AdminTrainersPage() {
   const [selectedAddress, setSelectedAddress] = useState<string>("");
 
   const [currentPage, setCurrentPage] = useState(1);
+    const [search, setSearch] = useState<string>('');
 
   useEffect(() => {
     const fetchFilters = async () => {
@@ -52,22 +53,44 @@ export default function AdminTrainersPage() {
   }, []);
 
   useEffect(() => {
-    const fetchTrainers = async () => {
-      setLoading(true);
-      try {
-        const res = await axios.get(
-          `https://localhost:7296/user/searchTrainers?city=${selectedCity}&address=${selectedAddress}`
-        );
-        setTrainers(res.data);
-        setCurrentPage(1);
-      } catch {
-        setError("Nepavyko gauti trenerių");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTrainers();
-  }, [selectedCity, selectedAddress]);
+        const fetchTrainers = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                const requests = [];
+
+                const city = selectedCity.trim();
+                const address = selectedAddress.trim();
+                const nameQuery = search.trim();
+
+                if (city || address || (!nameQuery && !city && !address)) {
+                    const endpoint = `/user/searchTrainers?city=${city}&address=${address}`;
+                    requests.push(axios.get(`https://localhost:7296${endpoint}`));
+                }
+
+                if (nameQuery) {
+                    const endpoint = `/user/searchByName?q=${nameQuery}`;
+                    requests.push(axios.get(`https://localhost:7296${endpoint}`));
+                }
+
+                const responses = await Promise.all(requests);
+                const merged: Trainer[] = [];
+
+                responses.forEach((res) => merged.push(...res.data));
+
+                const unique = Array.from(new Map(merged.map(t => [t.id, t])).values());
+
+                setTrainers(unique);
+            } catch (err) {
+                setError("Failed to load trainers");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTrainers();
+    }, [selectedCity, selectedAddress, search]);
 
   const handleDemote = async (trainerId: string) => {
     await axios.post(`https://localhost:7296/user/${trainerId}/demote`);
@@ -103,6 +126,13 @@ export default function AdminTrainersPage() {
         </h1>
 
         <div className="flex flex-col md:flex-row gap-4 justify-center mb-6">
+          <input
+            type="text"
+            placeholder="Ieškoti pagal vardą ar pavardę"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="p-2 border border-gray-500 rounded w-full md:w-1/3"
+          />
           <select
             value={selectedCity}
             onChange={(e) => setSelectedCity(e.target.value)}
