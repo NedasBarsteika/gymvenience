@@ -7,6 +7,13 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import ProfilePictureEdit from "./profilePictureEdit";
 
+interface Gym {
+  id: number;
+  name: string;
+  address: string;
+  city: string;
+}
+
 function ProfilePage() {
   var user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -17,6 +24,13 @@ function ProfilePage() {
   const [rate, setRate] = useState<number>(user.hourlyRate || 0);
   const [rateLoading, setRateLoading] = useState<boolean>(false);
   const [rateError, setRateError] = useState<string | null>(null);
+
+  // Add gym states
+  const [gyms, setGyms] = useState<Gym[]>([]);
+  const [selectedGymId, setSelectedGymId] = useState<string>();
+  const [gymLoading, setGymLoading] = useState<boolean>(false);
+  const [gymError, setGymError] = useState<string | null>(null);
+  console.log(gyms);
 
   // Fetch total earnings for trainer
   useEffect(() => {
@@ -42,6 +56,42 @@ function ProfilePage() {
     localStorage.setItem("user", JSON.stringify(user));
     alert("Aprašymas sėkmingai pakeistas!");
   }
+
+  // Fetch gyms for trainers
+  useEffect(() => {
+    if (user.isTrainer) {
+      setGymLoading(true);
+      axios
+        .get("https://localhost:7296/api/Gym")
+        .then((response) => {
+          setGyms(response.data);
+          setGymLoading(false);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch gyms", err);
+          setGymError("Nepavyko įkelti sporto salių sąrašo");
+          setGymLoading(false);
+        });
+    }
+  }, []);
+
+  // Add gym update handler
+  const handleGymChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newGymId = e.target.value;
+    setGymError(null);
+    try {
+      // Option B: if your API uses the gymId in the URL
+      await axios.post(
+        `https://localhost:7296/user/${user.id}/assign-gym/${newGymId}`,
+        {},
+        { headers: { "Content-Type": "application/json" } }
+      );
+      setSelectedGymId(newGymId);
+    } catch (err) {
+      console.error("Klaida atnaujinant sporto salę:", err);
+      setGymError("Nepavyko atnaujinti sporto salės");
+    }
+  };
 
   const handleRateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,6 +211,35 @@ function ProfilePage() {
     }
   }
 
+  function IfTrainer_GymSelect() {
+    if (user.isTrainer) {
+      return (
+        <div className="mt-6">
+          <h3 className="font-semibold mb-2">Sporto salė</h3>
+          {gymError && <p className="text-red-500 mb-1">{gymError}</p>}
+          {gymLoading ? (
+            <p>Kraunama...</p>
+          ) : (
+            <select
+              value={selectedGymId}
+              onChange={handleGymChange}
+              className="p-2 border rounded w-full max-w-xs"
+              disabled={gymLoading}
+            >
+              <option value={0}>Pasirinkite sporto salę</option>
+              {gyms.map((gym) => (
+                <option key={gym.id} value={gym.id}>
+                  {gym.name.trim() ? `${gym.name} (${gym.address})` : gym.city}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+      );
+    }
+    return null;
+  }
+
   return (
     <>
       <title>Gymvenience | Profilis</title>
@@ -173,7 +252,7 @@ function ProfilePage() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
-          className="flex-1 pb-40"
+          className="flex-1 pb-70"
         >
           <div className="flex-nowrap columns-2 min-h-screen">
             {/*  Left side: basic profile information*/}
@@ -189,6 +268,8 @@ function ProfilePage() {
 
               {/*Bio*/}
               {IfTrainer_Bio()}
+
+              {IfTrainer_GymSelect()}
 
               {IfTrainer_Rate()}
 
