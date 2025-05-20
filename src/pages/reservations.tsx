@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import ReservationCard from "../components/ReservationCard"
 import axios from 'axios';
 import { useEffect, useState } from "react";
-import { resolveConfig } from "vite";
 
 interface ReservationRaw {
     id: string;
@@ -108,8 +107,6 @@ function ReservationsPage() {
         var scheduledReservations = reservations.filter((res: any) => res.isDone === false);
         var completedReservations = reservations.filter((res: any) => res.isDone === true);
 
-        console.log(completedReservations);
-
     return (
         <>
             <title>Gymvenience | Vizitai</title>
@@ -129,7 +126,7 @@ function ReservationsPage() {
                     </div>
 
                     <div className=" w-full justify-center p-4 bg-gray-100 min-h-screen gap-2 flex">
-                        <div className="float mb-8 plr-1/10 w-45/100 overflow-auto align-top">
+                        <div className="float mb-8 plr-1/10 w-45/100 overflow-scroll align-top">
                             <h2 className="text-xl text-center font-semibold mb-2">AKTYVŪS VIZITAI</h2>
 
                             {scheduledReservations.map((res: any) => (
@@ -146,7 +143,7 @@ function ReservationsPage() {
                             ))}
 
                         </div>
-                        <div className="float mb-8 plr-1/10 w-45/100 overflow-auto align-top">
+                        <div className="float mb-8 plr-1/10 w-45/100 overflow-scroll align-top">
                             <h2 className="text-xl text-center font-semibold mb-2">VIZITŲ ISTORIJA</h2>
 
                             {completedReservations.map((res: any) => (
